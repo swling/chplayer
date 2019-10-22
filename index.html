@@ -21,19 +21,16 @@
 				live: true, //是否是直播
 				loaded: 'loadedHandler', //当播放器加载后执行的函数
 				seek: 0, //默认需要跳转的时间
-				drag: '', //在flashplayer情况下是否需要支持拖动，拖动的属性是什么
+				// drag: '', //在flashplayer情况下是否需要支持拖动，拖动的属性是什么
 				// front: 'frontFun', //前一集按钮动作
 				// next: 'nextFun', //下一集按钮动作
 				//flashplayer: true, //强制使用flashplayer
 				html5m3u8:true,//是否使用hls，默认不选择，如果此属性设置成true，则不能设置flashplayer:true,
 				video: [
+					['http://cctvtxyh5ca.liveplay.myqcloud.com/live/cctv13_2/index.m3u8','application/x-mpegurl', 'M3U8', 0],
 					['https://rthkaudio1-lh.akamaihd.net/i/radio1_1@355864/index_56_a-p.m3u8','application/x-mpegurl', 'M3U8', 0],
 					// ['https://lhttp.qingting.fm/live/1007/64k.mp3', 'audio/mp3', 'MP3', 0],
 				]
-				/*video:[
-					['http://cdn.theoplayer.com/video/star_wars_episode_vii-the_force_awakens_official_comic-con_2015_reel_(2015)/index.m3u8','','标清',0],
-					['http://cdn.theoplayer.com/video/star_wars_episode_vii-the_force_awakens_official_comic-con_2015_reel_(2015)/index.m3u8','','高清',10]
-				]*/
 			};
 			var player = new chplayer(videoObject);
 
