@@ -20,7 +20,7 @@
 		javascriptPath = thisPath.substring(0, thisPath.lastIndexOf('/') + 1);
 	}();
 	var chplayer = function(obj) {
-		if(obj) {
+		if (obj) {
 			this.embed(obj);
 		}
 	};
@@ -75,7 +75,7 @@
 			preview: null, //预览图片对象
 			prompt: null, //提示点功能
 			video: null, //视频地址
-			debug:false//是否开启调试模式
+			debug: false //是否开启调试模式
 		},
 		vars: {},
 		//全局变量/变量类型：Object/功能：语言配置
@@ -162,7 +162,10 @@
 		//全局变量/变量类型：Boolean/功能：是否使用HTML5-VIDEO播放
 		html5Video: true,
 		//全局变量/变量类型：Object/功能：记录视频容器节点的x,y
-		pdCoor: { x: 0, y: 0 },
+		pdCoor: {
+			x: 0,
+			y: 0
+		},
 		//全局变量/变量类型：String/功能：判断当前使用的播放器类型，html5video或flashplayer
 		playerType: '',
 		//全局变量/变量类型：Int/功能：加载进度条的长度
@@ -186,7 +189,9 @@
 		//全局变量/字幕索引
 		trackIndex: 0,
 		//全局变量/当前显示的字幕内容
-		nowTrackShow: { sn: '' },
+		nowTrackShow: {
+			sn: ''
+		},
 		//全局变量/保存字幕元件数组
 		trackElement: [],
 		//全局变量/将视频转换为图片
@@ -220,18 +225,18 @@
 		*/
 		embed: function(c) {
 			//c:Object：是调用接口传递的属性对象
-			if(c == undefined || !c) {
+			if (c == undefined || !c) {
 				this.eject(this.errorList[0]);
 				return;
 			}
-			if(typeof(c) != 'object') {
+			if (typeof(c) != 'object') {
 				this.eject(this.errorList[1]);
 			}
 			this.vars = this.standardization(this.varsConfig, c);
 			// if((!this.supportVideo() && this.vars['flashplayer'] != '') || this.vars['flashplayer']) {
 			// 	this.html5Video = false;
 			// }
-			if(this.vars['video']) {
+			if (this.vars['video']) {
 				//判断视频数据类型
 				this.analysedVideoUrl(this.vars['video']);
 				return this;
@@ -249,12 +254,12 @@
 			var thisTemp = this;
 			//定义全局变量VA:Array：视频列表（包括视频地址，类型，清晰度说明）
 			this.VA = [];
-			if(typeof(video) == 'string') { //如果是字符形式的则判断后缀进行填充
+			if (typeof(video) == 'string') { //如果是字符形式的则判断后缀进行填充
 				this.VA = [
 					[video, '', '', 0]
 				];
 				var fileExt = this.getFileExt(video);
-				switch(fileExt) {
+				switch (fileExt) {
 					case '.mp4':
 						this.VA[0][1] = 'video/mp4';
 						break;
@@ -268,23 +273,23 @@
 						break;
 				}
 				this.getVideo();
-			} else if(typeof(video) == 'object') { //对象或数组
-				if(!this.isUndefined(typeof(video.length))) { //说明是数组
-					if(typeof(video[0]) == 'string') {
+			} else if (typeof(video) == 'object') { //对象或数组
+				if (!this.isUndefined(typeof(video.length))) { //说明是数组
+					if (typeof(video[0]) == 'string') {
 						/*
 						 如果是文本形式的数组
 						video:['url','type','url','type']
 						*/
-						if(video.length % 2 == 1) {
+						if (video.length % 2 == 1) {
 							this.eject(this.errorList[3]);
 							return;
 						}
-						for(i = 0; i < video.length; i++) {
-							if(i % 2 == 0) {
+						for (i = 0; i < video.length; i++) {
+							if (i % 2 == 0) {
 								this.VA.push([video[i], video[i + 1], '', 0]);
 							}
 						}
-					} else if(!this.isUndefined(typeof(video[0].length))) { //说明是数组形式的数组
+					} else if (!this.isUndefined(typeof(video[0].length))) { //说明是数组形式的数组
 						this.VA = video;
 					} else {
 						/*
@@ -320,9 +325,9 @@
 						*/
 						//分析视频地址
 
-						for(i = 0; i < video.length; i++) {
+						for (i = 0; i < video.length; i++) {
 							var vlist = video[i]['list'];
-							for(y = 0; y < vlist.length; y++) {
+							for (y = 0; y < vlist.length; y++) {
 								this.VA.push([vlist[y]['url'], vlist[y]['type'], video[i]['definition'], this.isUndefined(vlist[y]['weight']) ? 0 : vlist[y]['weight']]);
 							}
 						}
@@ -333,14 +338,14 @@
 						如果video格式是对象形式，则分二种
 						如果video对象里包含type，则直接播放
 					*/
-					if(!this.isUndefined(video['type'])) {
+					if (!this.isUndefined(video['type'])) {
 						this.VA.push([video['url'], video['type'], '', 0]);
 						this.getVideo();
 					}
 					/*
 						如果video对象里包含ajax，则使用ajax调用
 					*/
-					else if(!this.isUndefined(video['url'])) { //只要包含url，则认为是ajax请求
+					else if (!this.isUndefined(video['url'])) { //只要包含url，则认为是ajax请求
 						video.success = function(data) {
 							thisTemp.analysedVideoUrl(data);
 						};
@@ -364,7 +369,7 @@
 			var video = document.createElement('video');
 			var codecs = function(type) {
 				var cod = '';
-				switch(type) {
+				switch (type) {
 					case 'video/mp4':
 						cod = 'avc1.4D401E, mp4a.40.2';
 						break;
@@ -380,12 +385,12 @@
 				return cod;
 			};
 			var supportType = function(vidType, codType) {
-					if(!video.canPlayType) {
-						this.html5Video = false;
-						return;
-					}
+				if (!video.canPlayType) {
+					this.html5Video = false;
+					return;
+				}
 				var isSupp = video.canPlayType(vidType + ';codecs="' + codType + '"');
-				if(isSupp == '') {
+				if (isSupp == '') {
 					return false
 				}
 				return true;
@@ -395,25 +400,25 @@
 			// 	this.html5Video = false;
 			// 	return;
 			// }
-			if(navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i)) {
+			if (navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i)) {
 				mobile = true;
 			}
-			for(var i = 0; i < va.length; i++) {
+			for (var i = 0; i < va.length; i++) {
 				var v = va[i];
-				if(v){
-					if(v[1] != '' && !mobile && supportType(v[1], codecs(v[1])) && v[0].substr(0, 4) != 'rtmp') {
+				if (v) {
+					if (v[1] != '' && !mobile && supportType(v[1], codecs(v[1])) && v[0].substr(0, 4) != 'rtmp') {
 						nva.push(v);
 					}
-					if(this.getFileExt(v[0]) == '.m3u8' && this.vars['html5m3u8']) {
+					if (this.getFileExt(v[0]) == '.m3u8' && this.vars['html5m3u8']) {
 						this.isM3u8 = true;
 						nva.push(v);
 					}
 				}
 			}
-			if(nva.length > 0) {
+			if (nva.length > 0) {
 				this.VA = nva;
 			} else {
-				if(!mobile) {
+				if (!mobile) {
 					this.html5Video = false;
 				}
 			}
@@ -424,11 +429,11 @@
 		*/
 		getVideo: function() {
 			//如果存在字幕则加载
-			if(this.V) { //如果播放器已存在，则认为是从newVideo函数发送过来的请求
+			if (this.V) { //如果播放器已存在，则认为是从newVideo函数发送过来的请求
 				this.changeVideo();
 				return;
 			}
-			if(this.vars['chtrack']) {
+			if (this.vars['chtrack']) {
 				this.loadTrack();
 			}
 			this.getHtml5Video(); //判断浏览器支持的视频格式
@@ -445,7 +450,7 @@
 
 			this.CD = this.getByElement(v['container']);
 			volume = v['volume'];
-			if(!this.CD) {
+			if (!this.CD) {
 				this.eject(this.errorList[6], v['container']);
 				return false;
 			}
@@ -456,7 +461,7 @@
 			playerDiv.className = playerID;
 			this.V = undefined;
 			this.CD.innerHTML = '';
-			
+
 			this.CD.appendChild(playerDiv);
 			this.PD = this.getByElement(playerID); //PD:定义播放器容器对象全局变量
 			this.css(this.CD, {
@@ -471,47 +476,47 @@
 				fontFamily: '"Microsoft YaHei", YaHei, "微软雅黑", SimHei,"\5FAE\8F6F\96C5\9ED1", "黑体",Arial'
 			});
 
-			if(this.html5Video) { //如果支持HTML5-VIDEO则默认使用HTML5-VIDEO播放器
+			if (this.html5Video) { //如果支持HTML5-VIDEO则默认使用HTML5-VIDEO播放器
 				//禁止播放器容器上鼠标选择文本
 				this.PD.onselectstart = this.PD.ondrag = function() {
 					return false;
 				};
 				//播放容器构建完成并且设置好样式
 				//构建播放器
-				if(this.VA.length == 1) {
+				if (this.VA.length == 1) {
 					src = ' src="' + this.VA[0][0] + '"';
 				} else {
 					var videoArr = this.VA.slice(0);
 					videoArr = this.arrSort(videoArr);
-					for(i = 0; i < videoArr.length; i++) {
+					for (i = 0; i < videoArr.length; i++) {
 						var type = '';
 						var va = videoArr[i];
-						if(va[1]) {
+						if (va[1]) {
 							type = ' type="' + va[1] + '"';
 						}
 						source += '<source src="' + va[0] + '"' + type + '>';
 					}
 				}
 				//分析视频地址结束
-				if(v['autoplay']) {
+				if (v['autoplay']) {
 					autoplay = ' autoplay="autoplay"';
 				}
-				if(v['poster']) {
+				if (v['poster']) {
 					poster = ' poster="' + v['poster'] + '"';
 				}
-				if(v['loop']) {
+				if (v['loop']) {
 					loop = ' loop="loop"';
 				}
-				if(v['seek'] > 0) {
+				if (v['seek'] > 0) {
 					this.needSeek = v['seek'];
 				}
-				if(v['track'] != null && v['chtrack'] == null) {
+				if (v['track'] != null && v['chtrack'] == null) {
 					var trackArr = v['track'];
 					var trackDefault = '';
 					var defaultHave = false;
-					for(i = 0; i < trackArr.length; i++) {
+					for (i = 0; i < trackArr.length; i++) {
 						var trackObj = trackArr[i];
-						if(trackObj['default'] && !defaultHave) {
+						if (trackObj['default'] && !defaultHave) {
 							trackDefault = ' default';
 							defaultHave = true;
 						} else {
@@ -522,15 +527,15 @@
 				}
 				var vid = this.randomString();
 				var html = '';
-				if(!this.isM3u8) {
+				if (!this.isM3u8) {
 					html = '<video id="' + vid + '"' + src + ' width="100%" height="100%"' + autoplay + poster + loop + ' webkit-playsinline="true">' + source + track + '</video>';
 				} else {
 					html = '<video id="' + vid + '" width="100%" height="100%"' + poster + loop + ' webkit-playsinline="true">' + track + '</video>';
 				}
 				this.PD.innerHTML = html;
-				this.V = this.getByElement('#'+vid); //V：定义播放器对象全局变量
+				this.V = this.getByElement('#' + vid); //V：定义播放器对象全局变量
 				this.V.volume = volume; //定义音量
-				if(this.isM3u8) {
+				if (this.isM3u8) {
 					var loadJsHandler = function() {
 						thisTemp.embedHls(thisTemp.VA[0][0], v['autoplay']);
 					};
@@ -538,7 +543,7 @@
 				}
 				this.css(this.V, 'backgroundColor', '#C14550');
 				//创建一个画布容器
-				if(this.config['videoDrawImage']) {
+				if (this.config['videoDrawImage']) {
 					var canvasID = 'vcanvas' + this.randomString();
 					var canvasDiv = document.createElement('div');
 					canvasDiv.className = canvasID;
@@ -553,7 +558,7 @@
 						cursor: 'pointer',
 						left: '0px',
 						top: '0px',
-						zIndex: '10'
+						// zIndex: '10'
 					});
 					var cvid = 'ccanvas' + this.randomString();
 					this.MD.innerHTML = this.newCanvas(cvid, this.PD.offsetWidth, this.PD.offsetHeight);
@@ -577,7 +582,7 @@
 		*/
 		playerLoad: function() {
 			var thisTemp = this;
-			if(this.isFirst) {
+			if (this.isFirst) {
 				this.isFirst = false;
 				window.setTimeout(function() {
 					thisTemp.loadedHandler();
@@ -615,7 +620,7 @@
 			this.addListener('pause', eventPause);
 			//监听视频播放时间事件
 			var eventTimeupdate = function(event) {
-				if(thisTemp.timerLoading != null) {
+				if (thisTemp.timerLoading != null) {
 					thisTemp.loadingStart(false);
 				}
 			};
@@ -639,7 +644,7 @@
 			var eventVolumeChange = function(event) {
 				try {
 					thisTemp.volumechangeHandler();
-				} catch(event) {}
+				} catch (event) {}
 			};
 			this.addListener('volumechange', eventVolumeChange);
 			//建立界面
@@ -755,7 +760,7 @@
 			this.body.appendChild(menuDiv);
 			//构建一些PD（播放器容器）里使用的元素结束
 
-			if(this.vars['live']) { //如果是直播，时间显示文本框里显示当前系统时间
+			if (this.vars['live']) { //如果是直播，时间显示文本框里显示当前系统时间
 				timeInto = this.getNowDate();
 			}
 			//构建控制栏的内容
@@ -788,45 +793,45 @@
 			this.getByElement(errorTextID).innerHTML = this.language['error']; //构建错误时显示的文本框
 			this.getByElement(logoID).innerHTML = this.vars['logo'] || this.logo; //构建logo
 			//CB:Object：全局变量，将一些全局需要用到的元素统一放在CB对象里
-			var pd=this.PD;
+			var pd = this.PD;
 			this.CB = {
-				controlBarBg: this.getByElement(controlBarBgID,pd),
-				controlBar: this.getByElement(controlBarID,pd),
-				promptBg: this.getByElement(promptBgID,pd),
-				prompt: this.getByElement(promptID,pd),
-				timeProgressBg: this.getByElement(timeProgressBgID,pd),
-				loadProgress: this.getByElement(loadProgressID,pd),
-				timeProgress: this.getByElement(timeProgressID,pd),
-				timeBoBg: this.getByElement(timeBOBGID,pd),
-				timeButton: this.getByElement(timeBOID,pd),
-				timeText: this.getByElement(timeTextID,pd),
-				play: this.getByElement(playID,pd),
-				front: this.getByElement(frontID,pd),
-				next: this.getByElement(nextID,pd),
-				pause: this.getByElement(pauseID,pd),
-				definition: this.getByElement(definitionID,pd),
-				definitionP: this.getByElement(definitionPID,pd),
-				definitionLine: this.getByElement(dlineID + '-rb',pd),
-				full: this.getByElement(fullID,pd),
-				escFull: this.getByElement(escFullID,pd),
-				mute: this.getByElement(muteID,pd),
-				escMute: this.getByElement(escMuteID,pd),
-				volume: this.getByElement(volumeID,pd),
-				volumeBg: this.getByElement(volumeBgID,pd),
-				volumeUp: this.getByElement(volumeUpID,pd),
-				volumeBO: this.getByElement(volumeBOID,pd),
-				pauseCenter: this.getByElement(pauseCenterID,pd),
+				controlBarBg: this.getByElement(controlBarBgID, pd),
+				controlBar: this.getByElement(controlBarID, pd),
+				promptBg: this.getByElement(promptBgID, pd),
+				prompt: this.getByElement(promptID, pd),
+				timeProgressBg: this.getByElement(timeProgressBgID, pd),
+				loadProgress: this.getByElement(loadProgressID, pd),
+				timeProgress: this.getByElement(timeProgressID, pd),
+				timeBoBg: this.getByElement(timeBOBGID, pd),
+				timeButton: this.getByElement(timeBOID, pd),
+				timeText: this.getByElement(timeTextID, pd),
+				play: this.getByElement(playID, pd),
+				front: this.getByElement(frontID, pd),
+				next: this.getByElement(nextID, pd),
+				pause: this.getByElement(pauseID, pd),
+				definition: this.getByElement(definitionID, pd),
+				definitionP: this.getByElement(definitionPID, pd),
+				definitionLine: this.getByElement(dlineID + '-rb', pd),
+				full: this.getByElement(fullID, pd),
+				escFull: this.getByElement(escFullID, pd),
+				mute: this.getByElement(muteID, pd),
+				escMute: this.getByElement(escMuteID, pd),
+				volume: this.getByElement(volumeID, pd),
+				volumeBg: this.getByElement(volumeBgID, pd),
+				volumeUp: this.getByElement(volumeUpID, pd),
+				volumeBO: this.getByElement(volumeBOID, pd),
+				pauseCenter: this.getByElement(pauseCenterID, pd),
 				menu: this.getByElement(menuID),
-				loading: this.getByElement(loadingID,pd),
-				loadingCanvas: this.getByElement(loadingID + '-canvas',pd),
-				errorText: this.getByElement(errorTextID,pd),
-				logo: this.getByElement(logoID,pd),
-				playLine: this.getByElement(dlineID + '-la',pd),
-				frontLine: this.getByElement(dlineID + '-lb',pd),
-				nextLine: this.getByElement(dlineID + '-lc',pd),
+				loading: this.getByElement(loadingID, pd),
+				loadingCanvas: this.getByElement(loadingID + '-canvas', pd),
+				errorText: this.getByElement(errorTextID, pd),
+				logo: this.getByElement(logoID, pd),
+				playLine: this.getByElement(dlineID + '-la', pd),
+				frontLine: this.getByElement(dlineID + '-lb', pd),
+				nextLine: this.getByElement(dlineID + '-lc', pd),
 				fullLine: this.getByElement(dlineID + '-ra'),
-				definitionLine: this.getByElement(dlineID + '-rb',pd),
-				muteLine: this.getByElement(dlineID + '-rc',pd)
+				definitionLine: this.getByElement(dlineID + '-rb', pd),
+				muteLine: this.getByElement(dlineID + '-rc', pd)
 			};
 			this.buttonWidth = {
 				play: bWidth,
@@ -845,7 +850,7 @@
 				bottom: '0px',
 				filter: 'alpha(opacity:0.8)',
 				opacity: '0.8',
-				zIndex: '90'
+				// zIndex: '90'
 			});
 			//控制栏容器
 			this.css(controlBarID, {
@@ -853,7 +858,7 @@
 				height: bHeight + 'px',
 				position: 'absolute',
 				bottom: '0px',
-				zIndex: '90'
+				// zIndex: '90'
 			});
 			//中间暂停按钮
 			this.css(pauseCenterID, {
@@ -863,7 +868,7 @@
 				position: 'absolute',
 				display: 'none',
 				cursor: 'pointer',
-				zIndex: '100'
+				// zIndex: '100'
 			});
 			//loading
 			this.css(loadingID, {
@@ -871,7 +876,7 @@
 				height: '60px',
 				position: 'absolute',
 				display: 'none',
-				zIndex: '100'
+				// zIndex: '100'
 			});
 			//出错文本框
 			this.css(errorTextID, {
@@ -883,9 +888,9 @@
 				textAlign: 'center',
 				position: 'absolute',
 				display: 'none',
-				zIndex: '101',
+				// zIndex: '101',
 				cursor: 'default',
-				zIndex: '100'
+				// zIndex: '100'
 			});
 			//定义logo文字的样式
 			this.css(logoID, {
@@ -899,7 +904,7 @@
 				float: 'left',
 				left: '-1000px',
 				top: '20px',
-				zIndex: '100',
+				// zIndex: '100',
 				filter: 'alpha(opacity:0.8)',
 				opacity: '0.8',
 				cursor: 'default'
@@ -925,7 +930,7 @@
 				paddingRight: '5px',
 				bottom: '0px',
 				display: 'none',
-				zIndex: '95'
+				// zIndex: '95'
 			});
 			this.css(promptBgID, {
 				backgroundColor: '#C14550',
@@ -940,7 +945,7 @@
 				overflow: 'hidden',
 				position: 'absolute',
 				bottom: '38px',
-				zIndex: '88'
+				// zIndex: '88'
 			});
 			//加载进度和时间进度
 			this.css([loadProgressID, timeProgressID], {
@@ -949,7 +954,7 @@
 				position: 'absolute',
 				bottom: '38px',
 				top: '0px',
-				zIndex: '91'
+				// zIndex: '91'
 			});
 			this.css(loadProgressID, 'backgroundColor', '#6F6F6F');
 			this.css(timeProgressID, 'backgroundColor', bOverColor);
@@ -961,7 +966,7 @@
 				position: 'absolute',
 				bottom: '34px',
 				cursor: 'pointer',
-				zIndex: '92'
+				// zIndex: '92'
 			});
 			this.css(timeBOID, {
 				width: '14px',
@@ -972,7 +977,7 @@
 				cursor: 'pointer',
 				position: 'absolute',
 				top: '0px',
-				zIndex: '20'
+				// zIndex: '20'
 			});
 			this.css(timeBWID, {
 				width: '8px',
@@ -1028,7 +1033,7 @@
 				overflow: 'hidden',
 				cursor: 'pointer'
 			});
-			if(this.vars['volume'] > 0) {
+			if (this.vars['volume'] > 0) {
 				this.css(escMuteID, 'display', 'none');
 			} else {
 				this.css(muteID, 'display', 'none');
@@ -1098,7 +1103,7 @@
 				bottom: '4px',
 				backgroundColor: '#C14550',
 				textAlign: 'center',
-				zIndex: '95',
+				// zIndex: '95',
 				cursor: 'pointer',
 				display: 'none'
 			});
@@ -1421,13 +1426,13 @@
 			};
 			this.addListener('click', pauseClick, this.CB['pause']);
 			var frontClick = function(event) {
-				if(thisTemp.vars['front']) {
+				if (thisTemp.vars['front']) {
 					eval(thisTemp.vars['front'] + '()');
 				}
 			};
 			this.addListener('click', frontClick, this.CB['front']);
 			var nextClick = function(event) {
-				if(thisTemp.vars['next']) {
+				if (thisTemp.vars['next']) {
 					eval(thisTemp.vars['next'] + '()');
 				}
 			};
@@ -1539,7 +1544,7 @@
 			var volumeBgMove = function(event) {
 				var volumeBgXY = thisTemp.getCoor(thisTemp.CB['volumeBg']);
 				var eventX = thisTemp.client(event)['x'];
-				var eventVolume = parseInt((eventX -volumeBgXY['x']) * 100 / thisTemp.CB['volumeBg'].offsetWidth);
+				var eventVolume = parseInt((eventX - volumeBgXY['x']) * 100 / thisTemp.CB['volumeBg'].offsetWidth);
 				var buttonPromptObj = {
 					title: thisTemp.language['volume'] + eventVolume + '%',
 					x: eventX,
@@ -1560,8 +1565,8 @@
 		videoClick: function() {
 			var thisTemp = this;
 			var clearTimerClick = function() {
-				if(thisTemp.timerClick != null) {
-					if(thisTemp.timerClick.runing) {
+				if (thisTemp.timerClick != null) {
+					if (thisTemp.timerClick.runing) {
 						thisTemp.timerClick.stop();
 					}
 					thisTemp.timerClick = null;
@@ -1574,10 +1579,10 @@
 
 			};
 			clearTimerClick();
-			if(this.isClick) {
+			if (this.isClick) {
 				this.isClick = false;
-				if(thisTemp.config['videoDbClick']) {
-					if(!this.full) {
+				if (thisTemp.config['videoDbClick']) {
+					if (!this.full) {
 						thisTemp.fullScreen();
 					} else {
 						thisTemp.quitFullScreen();
@@ -1598,7 +1603,7 @@
 		timeButtonMouseDown: function() {
 			var thisTemp = this;
 			var timePrompt = function(time) {
-				if(isNaN(time)) {
+				if (isNaN(time)) {
 					time = 0;
 				}
 				var timeButtonXY = thisTemp.getCoor(thisTemp.CB['timeButton']);
@@ -1620,8 +1625,8 @@
 				},
 				monitorFun: function(time) {},
 				endFun: function(time) {
-					if(thisTemp.V) {
-						if(thisTemp.V.duration > 0) {
+					if (thisTemp.V) {
+						if (thisTemp.V.duration > 0) {
 							thisTemp.needSeek = 0;
 							thisTemp.seek(parseInt(time));
 						}
@@ -1635,8 +1640,8 @@
 				refer: this.CB['timeBoBg'],
 				grossValue: 'time',
 				fun: function(time) {
-					if(thisTemp.V) {
-						if(thisTemp.V.duration > 0) {
+					if (thisTemp.V) {
+						if (thisTemp.V.duration > 0) {
 							thisTemp.needSeek = 0;
 							thisTemp.seek(parseInt(time));
 						}
@@ -1654,23 +1659,23 @@
 				};
 				thisTemp.promptShow(false, buttonPromptObj);
 				var def = false;
-				if(!thisTemp.isUndefined(thisTemp.CB['definitionP'])) {
-					if(thisTemp.css(thisTemp.CB['definitionP'], 'display') != 'block') {
+				if (!thisTemp.isUndefined(thisTemp.CB['definitionP'])) {
+					if (thisTemp.css(thisTemp.CB['definitionP'], 'display') != 'block') {
 						def = true;
 					}
 				}
-				if(thisTemp.vars['preview'] != null && def) {
+				if (thisTemp.vars['preview'] != null && def) {
 					buttonPromptObj['time'] = eventTime;
 					thisTemp.preview(buttonPromptObj);
 				}
 			};
 			var promptHide = function(event) {
 				thisTemp.promptShow(false);
-				if(thisTemp.previewDiv != null) {
+				if (thisTemp.previewDiv != null) {
 					thisTemp.css([thisTemp.previewDiv, thisTemp.previewTop], 'display', 'none');
 				}
 			};
-			if(!this.vars['live']) { //如果不是直播
+			if (!this.vars['live']) { //如果不是直播
 				this.isTimeButtonDown = true;
 				this.addListener('mousemove', timeBoBgmousemove, this.CB['timeBoBg']);
 				this.addListener('mouseout', promptHide, this.CB['timeBoBg']);
@@ -1697,22 +1702,22 @@
 			//建立参考元素的mouseClick事件，用来做为鼠标在其上按下时触发的状态
 			var thisTemp = this;
 			var referMouseClick = function(event) {
-				var referX = thisTemp.client(event)['x']-thisTemp.getCoor(obj['refer'])['x'];
+				var referX = thisTemp.client(event)['x'] - thisTemp.getCoor(obj['refer'])['x'];
 				var rWidth = obj['refer'].offsetWidth;
 				var grossValue = 0;
-				if(obj['grossValue'] == 'volume') {
+				if (obj['grossValue'] == 'volume') {
 					grossValue = 100;
 				} else {
-					if(thisTemp.V) {
+					if (thisTemp.V) {
 						grossValue = thisTemp.V.duration;
 					}
 				}
 				var nowZ = parseInt(referX * grossValue / rWidth);
-				if(obj['fun']) {
+				if (obj['fun']) {
 					obj['fun'](nowZ);
 				}
 			};
-			if(this.isUndefined(obj['removeListener'])) {
+			if (this.isUndefined(obj['removeListener'])) {
 				this.addListener('click', referMouseClick, obj['refer']);
 			} else {
 				this.removeListener('click', referMouseClick, obj['refer']);
@@ -1748,13 +1753,13 @@
 				var sLeft = parseInt(thisTemp.css(obj['slider'], 'left'));
 				var rWidth = obj['refer'].offsetWidth - obj['slider'].offsetWidth;
 				var grossValue = 0;
-				if(thisTemp.isUndefined(sLeft) || isNaN(sLeft)) {
+				if (thisTemp.isUndefined(sLeft) || isNaN(sLeft)) {
 					sLeft = 0;
 				}
-				if(obj['grossValue'] == 'volume') {
+				if (obj['grossValue'] == 'volume') {
 					grossValue = 100;
 				} else {
-					if(thisTemp.V) {
+					if (thisTemp.V) {
 						grossValue = thisTemp.V.duration;
 					}
 				}
@@ -1769,40 +1774,40 @@
 				referLeft = referXY['x'];
 				sliderLeft = sliderXY['x'];
 				criterionWidth = clientX - sliderLeft;
-				if(obj['startFun']) {
+				if (obj['startFun']) {
 					obj['startFun'](calculation());
 				}
 			};
 			var mMove = function(event) {
 				clientX = thisTemp.client(event)['x'];
 				var newX = clientX - criterionWidth - referLeft;
-				if(newX < 0) {
+				if (newX < 0) {
 					newX = 0;
 				}
-				if(newX > obj['refer'].offsetWidth - obj['slider'].offsetWidth) {
+				if (newX > obj['refer'].offsetWidth - obj['slider'].offsetWidth) {
 					newX = obj['refer'].offsetWidth - obj['slider'].offsetWidth;
 				}
 				thisTemp.css(obj['slider'], 'left', newX + 'px');
 				thisTemp.css(obj['follow'], 'width', (newX + obj['slider'].offsetWidth * 0.5) + 'px');
 				var nowZ = calculation();
-				if(obj['monitorFun']) {
+				if (obj['monitorFun']) {
 					obj['monitorFun'](nowZ);
 				}
 			};
 			var mUp = function(event) {
 				thisTemp.removeListener('mousemove', mMove, document);
 				thisTemp.removeListener('mouseup', mUp, document);
-				if(obj['endFun']) {
+				if (obj['endFun']) {
 					obj['endFun'](calculation());
 				}
 			};
 			var mOver = function(event) {
-				if(obj['overFun']) {
+				if (obj['overFun']) {
 					obj['overFun'](calculation());
 				}
 
 			};
-			if(this.isUndefined(obj['removeListener'])) {
+			if (this.isUndefined(obj['removeListener'])) {
 				this.addListener('mousedown', mDown, obj['slider']);
 				this.addListener('mouseover', mOver, obj['slider']);
 			} else {
@@ -1816,12 +1821,12 @@
 		*/
 		loadingStart: function(rot) {
 			var thisTemp = this;
-			if(this.isUndefined(rot)) {
+			if (this.isUndefined(rot)) {
 				rot = true;
 			}
 			this.css(thisTemp.CB['loading'], 'display', 'none');
-			if(this.timerLoading != null) {
-				if(this.timerLoading.runing) {
+			if (this.timerLoading != null) {
+				if (this.timerLoading.runing) {
 					this.timerLoading.stop();
 				}
 				this.timerLoading = null;
@@ -1830,10 +1835,10 @@
 				var nowRotate = '0';
 				try {
 					nowRotate = thisTemp.css(thisTemp.CB['loadingCanvas'], 'transform') || thisTemp.css(thisTemp.CB['loadingCanvas'], '-ms-transform') || thisTemp.css(thisTemp.CB['loadingCanvas'], '-moz-transform') || thisTemp.css(thisTemp.CB['loadingCanvas'], '-webkit-transform') || thisTemp.css(thisTemp.CB['loadingCanvas'], '-o-transform') || '0';
-				} catch(event) {}
+				} catch (event) {}
 				nowRotate = parseInt(nowRotate.replace('rotate(', '').replace('deg);', ''));
 				nowRotate += 4;
-				if(nowRotate > 360) {
+				if (nowRotate > 360) {
 					nowRotate = 0;
 				}
 				thisTemp.css(thisTemp.CB['loadingCanvas'], {
@@ -1844,7 +1849,7 @@
 					oTransform: 'rotate(' + nowRotate + 'deg)'
 				});
 			};
-			if(rot) {
+			if (rot) {
 				this.timerLoading = new this.timer(10, loadingFun);
 				//this.timerLoading.start();
 				this.css(thisTemp.CB['loading'], 'display', 'block');
@@ -1856,12 +1861,12 @@
 			判断是否需要显示上一集和下一集
 		*/
 		showFrontNext: function() {
-			if(this.vars['front']) {
+			if (this.vars['front']) {
 				this.css([this.CB['front'], this.CB['frontLine']], 'display', 'block');
 			} else {
 				this.css([this.CB['front'], this.CB['frontLine']], 'display', 'none');
 			}
-			if(this.vars['next']) {
+			if (this.vars['next']) {
 				this.css([this.CB['next'], this.CB['nextLine']], 'display', 'block');
 			} else {
 				this.css([this.CB['next'], this.CB['nextLine']], 'display', 'none');
@@ -1873,8 +1878,8 @@
 		*/
 		promptShow: function(ele, data) {
 			var obj = {};
-			if(ele || data) {
-				if(!this.isUndefined(data)) {
+			if (ele || data) {
+				if (!this.isUndefined(data)) {
 					obj = data;
 				} else {
 					var offsetCoor = this.getCoor(ele);
@@ -1892,10 +1897,10 @@
 				promoptWidth += 10;
 				var x = obj['x'] - (promoptWidth * 0.5);
 				var y = this.PD.offsetHeight - obj['y'] + 8;
-				if(x < 0) {
+				if (x < 0) {
 					x = 0;
 				}
-				if(x > this.PD.offsetWidth - promoptWidth) {
+				if (x > this.PD.offsetWidth - promoptWidth) {
 					x = this.PD.offsetWidth - promoptWidth;
 				}
 				this.css([this.CB['promptBg'], this.CB['prompt']], {
@@ -1916,8 +1921,8 @@
 		timerErrorFun: function() {
 			var thisTemp = this;
 			var clearIntervalError = function(event) {
-				if(thisTemp.timerError != null) {
-					if(thisTemp.timerError.runing) {
+				if (thisTemp.timerError != null) {
+					if (thisTemp.timerError.runing) {
 						thisTemp.timerError.stop();
 					}
 					thisTemp.timerError = null;
@@ -1938,7 +1943,7 @@
 			};
 			var errorListenerFun = function(event) {
 				window.setTimeout(function() {
-					if(isNaN(thisTemp.V.duration)) {
+					if (isNaN(thisTemp.V.duration)) {
 						errorFun(event);
 					}
 				}, 500);
@@ -1947,7 +1952,7 @@
 			this.addListener('error', errorListenerFun, this.V);
 			clearIntervalError();
 			var timerErrorFun = function() {
-				if(thisTemp.V && parseInt(thisTemp.V.networkState) == 3) {
+				if (thisTemp.V && parseInt(thisTemp.V.networkState) == 3) {
 					errorFun();
 				}
 			};
@@ -1960,8 +1965,8 @@
 		*/
 		judgeFullScreen: function() {
 			var thisTemp = this;
-			if(this.timerFull != null) {
-				if(this.timerFull.runing) {
+			if (this.timerFull != null) {
+				if (this.timerFull.runing) {
 					this.timerFull.stop();
 				}
 				this.timerFull = null;
@@ -1979,30 +1984,30 @@
 		isFullScreen: function() {
 			var controlbarbgW = this.CB['controlBarBg'].offsetWidth;
 			var containerW = this.CD.offsetWidth;
-			if(controlbarbgW != containerW && !this.full) {
+			if (controlbarbgW != containerW && !this.full) {
 				this.full = true;
 				this.addListenerFull();
 				this.elementCoordinate();
 				this.css(this.CB['full'], 'display', 'none');
 				this.css(this.CB['escFull'], 'display', 'block');
-				if(this.vars['live'] == 0) {
+				if (this.vars['live'] == 0) {
 					this.timeUpdateHandler();
 				}
 				this.PD.appendChild(this.CB['menu']);
 			}
-			if(controlbarbgW == containerW && this.full) {
+			if (controlbarbgW == containerW && this.full) {
 				this.full = false;
 				this.addListenerFull();
 				this.elementCoordinate();
 				this.css(this.CB['full'], 'display', 'block');
 				this.css(this.CB['escFull'], 'display', 'none');
-				if(this.timerFull != null) {
-					if(this.timerFull.runing) {
+				if (this.timerFull != null) {
+					if (this.timerFull.runing) {
 						this.timerFull.stop();
 					}
 					this.timerFull = null;
 				}
-				if(this.vars['live'] == 0) {
+				if (this.vars['live'] == 0) {
 					this.timeUpdateHandler();
 				}
 				this.body.appendChild(this.CB['menu']);
@@ -2022,15 +2027,15 @@
 				left: '10px',
 				top: '20px',
 				display: 'none',
-				zIndex: '999',
+				// zIndex: '999',
 				color: '#A1A9BE',
 				boxShadow: '2px 2px 3px #AAAAAA'
 			});
 			var mArr = this.contextMenu;
 			var html = '';
-			for(i = 0; i < mArr.length; i++) {
+			for (i = 0; i < mArr.length; i++) {
 				var me = mArr[i];
-				switch(me[1]) {
+				switch (me[1]) {
 					case 'default':
 						html += '<p>' + me[0] + '</p>';
 						break;
@@ -2049,7 +2054,7 @@
 			}
 			this.CB['menu'].innerHTML = html;
 			var pArr = this.CB['menu'].childNodes;
-			for(i = 0; i < pArr.length; i++) {
+			for (i = 0; i < pArr.length; i++) {
 				this.css(pArr[i], {
 					height: '30px',
 					lineHeight: '30px',
@@ -2059,14 +2064,14 @@
 					paddingLeft: '10px',
 					paddingRight: '30px'
 				});
-				if(mArr[i].length >= 4) {
-					if(mArr[i][3] == 'line') {
+				if (mArr[i].length >= 4) {
+					if (mArr[i][3] == 'line') {
 						this.css(pArr[i], 'borderTop', '1px solid #e9e9e9');
 					}
 				}
 				var aArr = pArr[i].childNodes;
-				for(var n = 0; n < aArr.length; n++) {
-					if(aArr[n].localName == 'a') {
+				for (var n = 0; n < aArr.length; n++) {
+					if (aArr[n].localName == 'a') {
 						this.css(aArr[n], {
 							color: '#C14550',
 							textDecoration: 'none'
@@ -2077,7 +2082,7 @@
 			this.PD.oncontextmenu = function(event) {
 				var eve = event || window.event;
 				var client = thisTemp.client(event);
-				if(eve.button == 2) {
+				if (eve.button == 2) {
 					eve.returnvalue = false;
 					var x = client['x'] + thisTemp.pdCoor['x'] - 2;
 					var y = client['y'] + thisTemp.pdCoor['y'] - 2;
@@ -2091,7 +2096,7 @@
 				return true;
 			};
 			var setTimeOutPClose = function() {
-				if(setTimeOutP) {
+				if (setTimeOutP) {
 					window.clearTimeout(setTimeOutP);
 					setTimeOutP = null;
 				}
@@ -2116,51 +2121,60 @@
 		*/
 		controlBarHide: function() {
 			var thisTemp = this;
-			var client = { x: 0, y: 0 },
-				oldClient = { x: 0, y: 0 };
+			var client = {
+					x: 0,
+					y: 0
+				},
+				oldClient = {
+					x: 0,
+					y: 0
+				};
 			var cShow = true;
 			var oldCoor = [0, 0];
 			var controlBarShow = function(show) {
-				if(show && !cShow) {
+				if (show && !cShow) {
 					cShow = true;
 					thisTemp.css(thisTemp.CB['controlBarBg'], 'display', 'block');
 					thisTemp.css(thisTemp.CB['controlBar'], 'display', 'block');
 					thisTemp.css(thisTemp.CB['timeProgressBg'], 'display', 'block');
 					thisTemp.css(thisTemp.CB['timeBoBg'], 'display', 'block');
 				} else {
-					if(cShow) {
+					if (cShow) {
 						cShow = false;
 						var paused = thisTemp.getMetaDate()['paused'];
-						if(!paused) {
+						if (!paused) {
 							thisTemp.css(thisTemp.CB['controlBarBg'], 'display', 'none');
 							thisTemp.css(thisTemp.CB['controlBar'], 'display', 'none');
 							thisTemp.css(thisTemp.CB['timeProgressBg'], 'display', 'none');
 							thisTemp.css(thisTemp.CB['timeBoBg'], 'display', 'none');
 							thisTemp.promptShow(false);
-							
+
 						}
 					}
 				}
 			};
 			var cbarFun = function(event) {
-				if(client['x'] == oldClient['x'] && client['y'] == oldClient['y']) {
+				if (client['x'] == oldClient['x'] && client['y'] == oldClient['y'] && client['y'] > 150) {
 					var cdH = parseInt(thisTemp.CD.offsetHeight);
-					if((client['y'] < cdH - 50 || client['y'] > cdH - 2) && cShow) {
-						// controlBarShow(false);
+					if ((client['y'] < cdH - 50 || client['y'] > cdH - 2) && cShow) {
+						controlBarShow(false);
 					}
 				} else {
-					if(!cShow) {
+					if (!cShow) {
 						controlBarShow(true);
 					}
 				}
-				oldClient = { x: client['x'], y: client['y'] }
+				oldClient = {
+					x: client['x'],
+					y: client['y']
+				}
 			};
 			this.timerCBar = new this.timer(2000, cbarFun);
 			var cdMove = function(event) {
 				var getClient = thisTemp.client(event);
 				client['x'] = getClient['x'];
 				client['y'] = getClient['y'];
-				if(!cShow) {
+				if (!cShow) {
 					controlBarShow(true);
 				}
 			};
@@ -2177,7 +2191,7 @@
 			var keyDown = function(eve) {
 				var keycode = eve.keyCode || eve.which;
 				var now = 0;
-				switch(keycode) {
+				switch (keycode) {
 					case 32:
 						thisTemp.playOrPause();
 						break;
@@ -2215,39 +2229,39 @@
 			var html = '';
 			var nowD = ''; //当前的清晰度
 			var i = 0;
-			for(i = 0; i < vArr.length; i++) {
+			for (i = 0; i < vArr.length; i++) {
 				var d = vArr[i][2];
-				if(dArr.indexOf(d) == -1) {
+				if (dArr.indexOf(d) == -1) {
 					dArr.push(d);
 				}
-				if(this.V) {
-					if(vArr[i][0] == this.V.currentSrc) {
+				if (this.V) {
+					if (vArr[i][0] == this.V.currentSrc) {
 						nowD = d;
 					}
 				}
 			}
-			if(!nowD) {
+			if (!nowD) {
 				nowD = dArr[0];
 			}
-			if(dArr.length > 1) {
+			if (dArr.length > 1) {
 				var zlen = 0;
-				for(i = 0; i < dArr.length; i++) {
+				for (i = 0; i < dArr.length; i++) {
 					html = '<p>' + dArr[i] + '</p>' + html;
 					var dlen = this.getStringLen(dArr[i]);
-					if(dlen > zlen) {
+					if (dlen > zlen) {
 						zlen = dlen;
 					}
 				}
-				if(html) {
+				if (html) {
 					html += '<p>' + nowD + '</p>';
 				}
 				this.CB['definition'].innerHTML = nowD;
 				this.CB['definitionP'].innerHTML = html;
 				this.css([this.CB['definition'], this.CB['definitionLine']], 'display', 'block');
 				var pArr = this.CB['definitionP'].childNodes;
-				for(var i = 0; i < pArr.length; i++) {
+				for (var i = 0; i < pArr.length; i++) {
 					var fontColor = '#FFFFFF';
-					if(pArr[i].innerHTML == nowD) {
+					if (pArr[i].innerHTML == nowD) {
 						fontColor = '#0782F5';
 					}
 					this.css(pArr[i], {
@@ -2256,11 +2270,11 @@
 						padding: '0px',
 						fontSize: '14px'
 					});
-					if(i < pArr.length - 1) {
+					if (i < pArr.length - 1) {
 						this.css(pArr[i], 'borderBottom', '1px solid #282828')
 					}
 					var defClick = function() {
-						if(nowD != this.innerHTML) {
+						if (nowD != this.innerHTML) {
 							thisTemp.css(thisTemp.CB['definitionP'], 'display', 'none');
 							thisTemp.newDefinition(this.innerHTML);
 						}
@@ -2297,7 +2311,7 @@
 			};
 			this.addListener('click', defClick, this.CB['definition']);
 			var defMouseOut = function(event) {
-				if(setTimeOutP) {
+				if (setTimeOutP) {
 					window.clearTimeout(setTimeOutP);
 					setTimeOutP = null;
 				}
@@ -2307,7 +2321,7 @@
 			};
 			this.addListener('mouseout', defMouseOut, thisTemp.CB['definitionP']);
 			var defMouseOver = function(event) {
-				if(setTimeOutP) {
+				if (setTimeOutP) {
 					window.clearTimeout(setTimeOutP);
 					setTimeOutP = null;
 				}
@@ -2322,32 +2336,32 @@
 			var vArr = this.VA;
 			var nVArr = [];
 			var i = 0;
-			for(i = 0; i < vArr.length; i++) {
+			for (i = 0; i < vArr.length; i++) {
 				var v = vArr[i];
-				if(v[2] == title) {
+				if (v[2] == title) {
 					nVArr.push(v);
 				}
 			}
-			if(nVArr.length < 1) {
+			if (nVArr.length < 1) {
 				return;
 			}
-			if(this.V != null && this.needSeek == 0) {
+			if (this.V != null && this.needSeek == 0) {
 				this.needSeek = this.V.currentTime;
 			}
-			if(this.getFileExt(nVArr[0][0]) != '.m3u8') {
+			if (this.getFileExt(nVArr[0][0]) != '.m3u8') {
 				this.isM3u8 = false;
 			}
-			if(!this.isM3u8) {
-				if(nVArr.length == 1) {
+			if (!this.isM3u8) {
+				if (nVArr.length == 1) {
 					this.V.innerHTML = '';
 					this.V.src = nVArr[0][0];
 				} else {
 					var source = '';
 					nVArr = this.arrSort(nVArr);
-					for(i = 0; i < nVArr.length; i++) {
+					for (i = 0; i < nVArr.length; i++) {
 						var type = '';
 						var va = nVArr[i];
-						if(va[1]) {
+						if (va[1]) {
 							type = ' type="' + va[1] + '"';
 						}
 						source += '<source src="' + va[0] + '"' + type + '>';
@@ -2369,13 +2383,13 @@
 		*/
 		embedHls: function(url, autoplay) {
 			var thisTemp = this;
-			if(Hls.isSupported()) {
+			if (Hls.isSupported()) {
 				var hls = new Hls();
 				hls.loadSource(url);
 				hls.attachMedia(this.V);
 				hls.on(Hls.Events.MANIFEST_PARSED, function() {
 					thisTemp.playerLoad();
-					if(autoplay) {
+					if (autoplay) {
 						thisTemp.play();
 					}
 				});
@@ -2388,11 +2402,11 @@
 		prompt: function() {
 			var thisTemp = this;
 			var prompt = this.vars['prompt'];
-			if(prompt == null || this.promptArr.length > 0) {
+			if (prompt == null || this.promptArr.length > 0) {
 				return;
 			}
 			var showPrompt = function(event) {
-				if(thisTemp.promptElement == null) {
+				if (thisTemp.promptElement == null) {
 					var random2 = 'prompte' + thisTemp.randomString(5);
 					var ele2 = document.createElement('div');
 					ele2.className = random2;
@@ -2405,17 +2419,17 @@
 						color: '#FFFFFF',
 						position: 'absolute',
 						display: 'block',
-						zIndex: '90'
+						// zIndex: '90'
 					});
 				}
 				var pcon = thisTemp.getPromptTest();
 				var pW = pcon['pW'],
 					pT = pcon['pT'],
 					pL = parseInt(thisTemp.css(this, 'left')) - parseInt(pW * 0.5);
-				if(pcon['pL'] > 10) {
+				if (pcon['pL'] > 10) {
 					pL = pcon['pL'];
 				}
-				if(pL < 0) {
+				if (pL < 0) {
 					pL = 0;
 				}
 				thisTemp.css(thisTemp.promptElement, {
@@ -2430,14 +2444,14 @@
 				});
 			};
 			var hidePrompt = function(event) {
-				if(thisTemp.promptElement != null) {
+				if (thisTemp.promptElement != null) {
 					thisTemp.css(thisTemp.promptElement, {
 						display: 'none'
 					});
 				}
 			};
 			var i = 0;
-			for(i = 0; i < prompt.length; i++) {
+			for (i = 0; i < prompt.length; i++) {
 				var pr = prompt[i];
 				var words = pr['words'];
 				var time = pr['time'];
@@ -2456,7 +2470,7 @@
 					top: '4px',
 					left: '-100px',
 					display: 'none',
-					zIndex: '1'
+					// zIndex: '1'
 				});
 
 				this.addListener('mouseover', showPrompt, div);
@@ -2473,20 +2487,24 @@
 			var pW = this.previewWidth,
 				pT = this.getCoor(this.CB['timeButton'])['y'],
 				pL = 0;
-			if(this.previewTop != null) {
+			if (this.previewTop != null) {
 				pT -= parseInt(this.css(this.previewTop, 'height'));
 				pL = parseInt(this.css(this.previewTop, 'left'));
 			} else {
 				pT -= 35;
 			}
 			pL += 2;
-			if(pL < 0) {
+			if (pL < 0) {
 				pL = 0;
 			}
-			if(pL > this.PD.offsetWidth - pW) {
+			if (pL > this.PD.offsetWidth - pW) {
 				pL = this.PD.offsetWidth - pW;
 			}
-			return { pW: pW, pT: pT, pL: pL };
+			return {
+				pW: pW,
+				pT: pT,
+				pL: pL
+			};
 		},
 		/*
 			内部函数
@@ -2494,9 +2512,9 @@
 		*/
 		deletePrompt: function() {
 			var arr = this.promptArr;
-			if(arr.length > 0) {
-				for(var i = 0; i < arr.length; i++) {
-					if(arr[i]) {
+			if (arr.length > 0) {
+				for (var i = 0; i < arr.length; i++) {
+					if (arr[i]) {
 						this.deleteChild(arr[i]);
 					}
 				}
@@ -2508,19 +2526,19 @@
 			计算提示点坐标
 		*/
 		changePrompt: function() {
-			if(this.promptArr.length == 0) {
+			if (this.promptArr.length == 0) {
 				return;
 			}
 			var arr = this.promptArr;
 			var duration = this.getMetaDate()['duration'];
 			var bw = this.CB['timeBoBg'].offsetWidth;
-			for(var i = 0; i < arr.length; i++) {
+			for (var i = 0; i < arr.length; i++) {
 				var time = parseInt(arr[i].dataset.time);
 				var left = parseInt(time * bw / duration) - parseInt(arr[i].offsetWidth * 0.5);
-				if(left < 0) {
+				if (left < 0) {
 					left = 0;
 				}
-				if(left > bw - parseInt(arr[i].offsetWidth * 0.5)) {
+				if (left > bw - parseInt(arr[i].offsetWidth * 0.5)) {
 					left = bw - parseInt(arr[i].offsetWidth * 0.5);
 				}
 				this.css(arr[i], {
@@ -2540,13 +2558,13 @@
 				scale: 0
 			};
 			preview = this.standardization(preview, this.vars['preview']);
-			if(preview['src'] == null || preview['scale'] <= 0) {
+			if (preview['src'] == null || preview['scale'] <= 0) {
 				return;
 			}
 			var srcArr = preview['src'];
-			if(this.previewStart == 0) { //如果还没有构建，则先进行构建
+			if (this.previewStart == 0) { //如果还没有构建，则先进行构建
 				this.previewStart = 1;
-				if(srcArr.length > 0) {
+				if (srcArr.length > 0) {
 					var i = 0;
 					var imgW = 0,
 						imgH = 0;
@@ -2560,7 +2578,7 @@
 						img.className = random + i;
 						img.onload = function(event) {
 							loadNum++;
-							if(thisTemp.previewDiv == null) { //如果没有建立DIV，则建
+							if (thisTemp.previewDiv == null) { //如果没有建立DIV，则建
 								imgW = img.width;
 								imgH = img.height;
 								thisTemp.previewWidth = parseInt(imgW * 0.1);
@@ -2577,7 +2595,7 @@
 									left: '0px',
 									top: eleTop + 'px',
 									display: 'none',
-									zIndex: '80'
+									// zIndex: '80'
 								});
 								ele.setAttribute('data-x', '0');
 								ele.setAttribute('data-y', eleTop);
@@ -2593,10 +2611,10 @@
 									left: '0px',
 									top: (obj['y'] - parseInt(imgH * 0.1) + 2) + 'px',
 									display: 'none',
-									zIndex: '81'
+									// zIndex: '81'
 								});
 								var html = '';
-								for(n = 0; n < srcArr.length; n++) {
+								for (n = 0; n < srcArr.length; n++) {
 									html += thisTemp.newCanvas(random + n, imgW * 10, parseInt(imgH * 0.1))
 								}
 								thisTemp.previewDiv.innerHTML = html;
@@ -2609,17 +2627,17 @@
 								sy = 0,
 								x = 0,
 								h = parseInt(imgH * 0.1);
-							for(n = 0; n < 100; n++) {
+							for (n = 0; n < 100; n++) {
 								x = parseInt(n * imgW * 0.1);
 								context.drawImage(cimg, sx, sy, parseInt(imgW * 0.1), h, x, 0, parseInt(imgW * 0.1), h);
 								sx += parseInt(imgW * 0.1);
-								if(sx >= imgW) {
+								if (sx >= imgW) {
 									sx = 0;
 									sy += h;
 								}
 								thisTemp.css(cimg, 'display', 'none');
 							}
-							if(loadNum == srcArr.length) {
+							if (loadNum == srcArr.length) {
 								thisTemp.previewStart = 2;
 							} else {
 								i++;
@@ -2631,11 +2649,11 @@
 				loadImg(i);
 				return;
 			}
-			if(this.previewStart == 2) {
+			if (this.previewStart == 2) {
 				var isTween = true;
 				var nowNum = parseInt(obj['time'] / this.vars['preview']['scale']);
 				var numTotal = parseInt(thisTemp.getMetaDate()['duration'] / this.vars['preview']['scale']);
-				if(thisTemp.css(thisTemp.previewDiv, 'display') == 'none') {
+				if (thisTemp.css(thisTemp.previewDiv, 'display') == 'none') {
 					isTween = false;
 				}
 				thisTemp.css(thisTemp.previewDiv, 'display', 'block');
@@ -2645,18 +2663,18 @@
 				thisTemp.css(thisTemp.previewDiv, 'top', top + 2 + 'px');
 				var topLeft = obj['x'] - parseInt(imgWidth * 0.5);
 				var timepieces = 0;
-				if(topLeft < 0) {
+				if (topLeft < 0) {
 					topLeft = 0;
 					timepieces = obj['x'] - topLeft - imgWidth * 0.5;
 				}
-				if(topLeft > thisTemp.PD.offsetWidth - imgWidth) {
+				if (topLeft > thisTemp.PD.offsetWidth - imgWidth) {
 					topLeft = thisTemp.PD.offsetWidth - imgWidth;
 					timepieces = obj['x'] - topLeft - imgWidth * 0.5;
 				}
-				if(left < 0) {
+				if (left < 0) {
 					left = 0;
 				}
-				if(left > numTotal * imgWidth - thisTemp.PD.offsetWidth) {
+				if (left > numTotal * imgWidth - thisTemp.PD.offsetWidth) {
 					left = numTotal * imgWidth - thisTemp.PD.offsetWidth;
 				}
 				thisTemp.css(thisTemp.previewTop, {
@@ -2664,21 +2682,21 @@
 					top: top + 2 + 'px',
 					display: 'block'
 				});
-				if(thisTemp.previewTop.offsetHeight>thisTemp.previewDiv.offsetHeight){
+				if (thisTemp.previewTop.offsetHeight > thisTemp.previewDiv.offsetHeight) {
 					thisTemp.css(thisTemp.previewTop, {
-						height:thisTemp.previewDiv.offsetHeight-(thisTemp.previewTop.offsetHeight-thisTemp.previewDiv.offsetHeight)+'px'
+						height: thisTemp.previewDiv.offsetHeight - (thisTemp.previewTop.offsetHeight - thisTemp.previewDiv.offsetHeight) + 'px'
 					});
 				}
-				if(this.previewTween != null) {
+				if (this.previewTween != null) {
 					this.animatePause(this.previewTween);
 					this.previewTween = null
 				}
 				var nowLeft = parseInt(thisTemp.css(thisTemp.previewDiv, 'left'));
 				var leftC = nowLeft + left;
-				if(nowLeft == -(left + timepieces)) {
+				if (nowLeft == -(left + timepieces)) {
 					return;
 				}
-				if(isTween) {
+				if (isTween) {
 					var obj = {
 						element: thisTemp.previewDiv,
 						start: null,
@@ -2696,7 +2714,7 @@
 			删除预览图节点
 		*/
 		deletePreview: function() {
-			if(this.previewDiv != null) {
+			if (this.previewDiv != null) {
 				this.deleteChild(this.previewDiv);
 				this.previewDiv = null;
 				this.previewStart = 0;
@@ -2707,7 +2725,7 @@
 			修改视频地址，属性
 		*/
 		changeVideo: function() {
-			if(!this.html5Video) {
+			if (!this.html5Video) {
 				this.getVarsObject();
 				this.V.newVideo(this.vars);
 				return;
@@ -2715,41 +2733,41 @@
 			var vArr = this.VA;
 			var v = this.vars;
 			var i = 0;
-			if(vArr.length < 1) {
+			if (vArr.length < 1) {
 				return;
 			}
-			if(this.V != null && this.needSeek == 0) {
+			if (this.V != null && this.needSeek == 0) {
 				this.needSeek = this.V.currentTime;
 			}
-			if(v['poster']) {
+			if (v['poster']) {
 				this.V.poster = v['poster'];
 			} else {
 				this.V.removeAttribute('poster');
 			}
-			if(v['loop']) {
+			if (v['loop']) {
 				this.V.loop = 'loop';
 			} else {
 				this.V.removeAttribute('loop');
 			}
-			if(v['seek'] > 0) {
+			if (v['seek'] > 0) {
 				this.needSeek = v['seek'];
 			} else {
 				this.needSeek = 0;
 			}
-			if(this.getFileExt(vArr[0][0]) != '.m3u8') {
+			if (this.getFileExt(vArr[0][0]) != '.m3u8') {
 				this.isM3u8 = false;
 			}
-			if(!this.isM3u8) {
-				if(vArr.length == 1) {
+			if (!this.isM3u8) {
+				if (vArr.length == 1) {
 					this.V.innerHTML = '';
 					this.V.src = vArr[0][0];
 				} else {
 					var source = '';
 					vArr = this.arrSort(vArr);
-					for(i = 0; i < vArr.length; i++) {
+					for (i = 0; i < vArr.length; i++) {
 						var type = '';
 						var va = vArr[i];
-						if(va[1]) {
+						if (va[1]) {
 							type = ' type="' + va[1] + '"';
 						}
 						source += '<source src="' + va[0] + '"' + type + '>';
@@ -2758,7 +2776,7 @@
 					this.V.innerHTML = source;
 				}
 				//分析视频地址结束
-				if(v['autoplay']) {
+				if (v['autoplay']) {
 					this.V.autoplay = 'autoplay';
 				} else {
 					this.V.removeAttribute('autoplay');
@@ -2767,14 +2785,14 @@
 			} else {
 				this.embedHls(vArr[0][0], v['autoplay']);
 			}
-			if(!this.isUndefined(v['volume'])) {
+			if (!this.isUndefined(v['volume'])) {
 				this.changeVolume(v['volume']);
 			}
 			this.resetPlayer(); //重置界面元素
 			this.timerErrorFun();
 			this.addListenerVideoChange();
 			//如果存在字幕则加载
-			if(this.vars['chtrack']) {
+			if (this.vars['chtrack']) {
 				this.loadTrack();
 			}
 		},
@@ -2812,17 +2830,17 @@
 			ele.push([
 				[this.CB['full'], this.CB['escFull'], this.CB['fullLine']], this.buttonWidth['full'] + 2, 'full'
 			]);
-			if(this.vars['front'] != '') {
+			if (this.vars['front'] != '') {
 				ele.push([
 					[this.CB['front'], this.CB['frontLine']], this.buttonWidth['front'] + 2
 				]);
 			}
-			if(this.vars['next'] != '') {
+			if (this.vars['next'] != '') {
 				ele.push([
 					[this.CB['next'], this.CB['nextLine']], this.buttonWidth['next'] + 2
 				]);
 			}
-			if(this.CB['definition'].innerHTML != '') {
+			if (this.CB['definition'].innerHTML != '') {
 				ele.push([
 					[this.CB['definition'], this.CB['definitionLine']], this.buttonWidth['definition'] + 2
 				]);
@@ -2844,31 +2862,31 @@
 			var len = 0;
 			var isc = true;
 			//计算所有要显示的节点的总宽度
-			for(var i = 0; i < ele.length; i++) {
+			for (var i = 0; i < ele.length; i++) {
 				var nlen = ele[i][1];
-				if(nlen > 2) {
+				if (nlen > 2) {
 					len += nlen;
 				} else {
 					isc = false;
 				}
 			}
-			if(isc) {
+			if (isc) {
 				this.buttonLen = len;
 				this.buttonArr = ele;
 			}
 			len = this.buttonLen;
 			ele = this.buttonArr;
-			for(var i = 0; i < ele.length; i++) {
-				if(len > controlBarW) {
+			for (var i = 0; i < ele.length; i++) {
+				if (len > controlBarW) {
 					len -= ele[i][1];
 					this.css(ele[i][0], 'display', 'none');
 				} else {
 					this.css(ele[i][0], 'display', 'block');
-					if(ele[i].length == 3) {
+					if (ele[i].length == 3) {
 						var name = ele[i][2];
-						switch(name) {
+						switch (name) {
 							case 'mute':
-								if(this.volume == 0) {
+								if (this.volume == 0) {
 									this.css(this.CB['mute'], 'display', 'none');
 								} else {
 									this.css(this.CB['escMute'], 'display', 'none');
@@ -2878,7 +2896,7 @@
 								this.playShow(this.V.paused ? false : true);
 								break;
 							case 'full':
-								if(this.full) {
+								if (this.full) {
 									this.css(this.CB['full'], 'display', 'none');
 								} else {
 									this.css(this.CB['escFull'], 'display', 'none');
@@ -2894,12 +2912,12 @@
 			初始化暂停或播放按钮
 		*/
 		initPlayPause: function() {
-			if(this.vars['autoplay']) {
+			if (this.vars['autoplay']) {
 				this.css([this.CB['play'], this.CB['pauseCenter']], 'display', 'none');
 				this.css(this.CB['pause'], 'display', 'block');
 			} else {
 				this.css(this.CB['play'], 'display', 'block');
-				if(this.css(this.CB['errorText'], 'display') == 'none') {
+				if (this.css(this.CB['errorText'], 'display') == 'none') {
 					this.css(this.CB['pauseCenter'], 'display', 'block');
 				}
 				this.css(this.CB['pause'], 'display', 'none');
@@ -2911,9 +2929,9 @@
 			构建错误监听事件函数
 		*/
 		addListenerError: function() {
-			for(var i = 0; i < this.errorFunArr.length; i++) {
+			for (var i = 0; i < this.errorFunArr.length; i++) {
 				var fun = this.errorFunArr[i];
-				if(typeof(fun) == 'string') {
+				if (typeof(fun) == 'string') {
 					fun = fun.replace('()', '');
 					eval(fun + '()');
 				} else {
@@ -2928,19 +2946,19 @@
 		delErrorFunArr: function(f) {
 			try {
 				var index = this.errorFunArr.indexOf(f);
-				if(index > -1) {
+				if (index > -1) {
 					this.errorFunArr.splice(index, 1);
 				}
-			} catch(e) {}
+			} catch (e) {}
 		},
 		/*
 			内部函数
 			构建是否全屏状态改变时要调用的监听事件函数
 		*/
 		addListenerFull: function() {
-			for(var i = 0; i < this.fullFunArr.length; i++) {
+			for (var i = 0; i < this.fullFunArr.length; i++) {
 				var fun = this.fullFunArr[i];
-				if(typeof(fun) == 'string') {
+				if (typeof(fun) == 'string') {
 					fun = fun.replace('()', '');
 					eval(fun + '()');
 				} else {
@@ -2955,19 +2973,19 @@
 		delFullFunArr: function(f) {
 			try {
 				var index = this.fullFunArr.indexOf(f);
-				if(index > -1) {
+				if (index > -1) {
 					this.fullFunArr.splice(index, 1);
 				}
-			} catch(e) {}
+			} catch (e) {}
 		},
 		/*
 			内部函数
 			构建播放地址改变时要调用的监听事件函数
 		*/
 		addListenerVideoChange: function() {
-			for(var i = 0; i < this.videoChangeFunArr.length; i++) {
+			for (var i = 0; i < this.videoChangeFunArr.length; i++) {
 				var fun = this.videoChangeFunArr[i];
-				if(typeof(fun) == 'string') {
+				if (typeof(fun) == 'string') {
 					fun = fun.replace('()', '');
 					eval(fun + '()');
 				} else {
@@ -2982,10 +3000,10 @@
 		delVideoChangeFunArr: function(f) {
 			try {
 				var index = this.videoChangeFunArr.indexOf(f);
-				if(index > -1) {
+				if (index > -1) {
 					this.videoChangeFunArr.splice(index, 1);
 				}
-			} catch(e) {}
+			} catch (e) {}
 		},
 		/*
 			下面为监听事件
@@ -2994,19 +3012,19 @@
 		*/
 		loadedHandler: function() {
 			this.loaded = true;
-			if(this.playerType != 'html5video') {
+			if (this.playerType != 'html5video') {
 				this.V.changeLanguage(this.language);
-				if(this.contextMenu.length > 0) {
+				if (this.contextMenu.length > 0) {
 					this.V.newMenu(this.contextMenu);
 				}
-				if(this.config) {
+				if (this.config) {
 					this.V.config(this.config);
 				}
 			}
-			if(this.vars['loaded'] != '') {
+			if (this.vars['loaded'] != '') {
 				try {
 					eval(this.vars['loaded'] + '()');
-				} catch(event) {
+				} catch (event) {
 
 				}
 				this.addListenerVideoChange();
@@ -3018,14 +3036,14 @@
 		*/
 		playingHandler: function() {
 			this.playShow(true);
-			if(this.needSeek > 0) {
+			if (this.needSeek > 0) {
 				this.seek(this.needSeek);
 				this.needSeek = 0;
 			}
-			if(this.animatePauseArray.length > 0) {
+			if (this.animatePauseArray.length > 0) {
 				this.animateResume('pause');
 			}
-			if(this.playerType == 'html5video' && this.V != null && this.config['videoDrawImage']) {
+			if (this.playerType == 'html5video' && this.V != null && this.config['videoDrawImage']) {
 				this.sendVCanvas();
 			}
 		},
@@ -3034,15 +3052,15 @@
 			使用画布附加视频
 		*/
 		sendVCanvas: function() {
-			if(this.timerVCanvas == null) {
+			if (this.timerVCanvas == null) {
 				this.css(this.V, 'display', 'none');
 				this.css(this.MD, 'display', 'block');
 				var thisTemp = this;
 				var videoCanvas = function() {
-					if(thisTemp.MDCX.width != thisTemp.PD.offsetWidth) {
+					if (thisTemp.MDCX.width != thisTemp.PD.offsetWidth) {
 						thisTemp.MDC.width = thisTemp.PD.offsetWidth;
 					}
-					if(thisTemp.MDCX.height != thisTemp.PD.offsetHeight) {
+					if (thisTemp.MDCX.height != thisTemp.PD.offsetHeight) {
 						thisTemp.MDC.height = thisTemp.PD.offsetHeight;
 					}
 					thisTemp.MDCX.clearRect(0, 0, thisTemp.MDCX.width, thisTemp.MDCX.height);
@@ -3058,10 +3076,10 @@
 		*/
 		pauseHandler: function() {
 			this.playShow(false);
-			if(this.animatePauseArray.length > 0) {
+			if (this.animatePauseArray.length > 0) {
 				this.animatePause('pause');
 			}
-			if(this.playerType == 'html5video' && this.V != null && this.config['videoDrawImage']) {
+			if (this.playerType == 'html5video' && this.V != null && this.config['videoDrawImage']) {
 				this.stopVCanvas();
 			}
 		},
@@ -3070,10 +3088,10 @@
 			停止画布
 		*/
 		stopVCanvas: function() {
-			if(this.timerVCanvas != null) {
+			if (this.timerVCanvas != null) {
 				this.css(this.V, 'display', 'block');
 				this.css(this.MD, 'display', 'none');
-				if(this.timerVCanvas.runing) {
+				if (this.timerVCanvas.runing) {
 					this.timerVCanvas.stop();
 				}
 				this.timerVCanvas = null;
@@ -3084,13 +3102,13 @@
 			根据当前播放还是暂停确认图标显示
 		*/
 		playShow: function(b) {
-			if(b) {
+			if (b) {
 				this.css(this.CB['play'], 'display', 'none');
 				this.css(this.CB['pauseCenter'], 'display', 'none');
 				this.css(this.CB['pause'], 'display', 'block');
 			} else {
 				this.css(this.CB['play'], 'display', 'block');
-				if(this.css(this.CB['errorText'], 'display') == 'none') {
+				if (this.css(this.CB['errorText'], 'display') == 'none') {
 					this.css(this.CB['pauseCenter'], 'display', 'block');
 				} else {
 					this.css(this.CB['pauseCenter'], 'display', 'none');
@@ -3105,7 +3123,7 @@
 		seekedHandler: function() {
 			this.resetTrack();
 			this.isTimeButtonMove = true;
-			if(this.V.paused) {
+			if (this.V.paused) {
 				this.play();
 			}
 		},
@@ -3114,7 +3132,7 @@
 			监听播放结束
 		*/
 		endedHandler: function() {
-			if(!this.vars['loop']) {
+			if (!this.vars['loop']) {
 				this.pause();
 			}
 		},
@@ -3124,14 +3142,14 @@
 		*/
 		volumechangeHandler: function() {
 			try {
-				if(this.V.volume > 0) {
+				if (this.V.volume > 0) {
 					this.css(this.CB['mute'], 'display', 'block');
 					this.css(this.CB['escMute'], 'display', 'none');
 				} else {
 					this.css(this.CB['mute'], 'display', 'none');
 					this.css(this.CB['escMute'], 'display', 'block');
 				}
-			} catch(event) {}
+			} catch (event) {}
 		},
 
 		/*
@@ -3140,16 +3158,16 @@
 		*/
 		timeUpdateHandler: function() {
 			var duration = 0;
-			if(this.playerType == 'html5video') {
+			if (this.playerType == 'html5video') {
 				try {
 					duration = this.V.duration;
-				} catch(event) {}
+				} catch (event) {}
 			}
-			if(duration > 0) {
+			if (duration > 0) {
 				this.time = this.V.currentTime;
 				this.timeTextHandler();
 				this.trackShowHandler();
-				if(this.isTimeButtonMove) {
+				if (this.isTimeButtonMove) {
 					this.timeProgress(this.time, duration);
 				}
 			}
@@ -3161,10 +3179,10 @@
 		timeProgress: function(time, duration) {
 			var timeProgressBgW = this.CB['timeProgressBg'].offsetWidth;
 			var timeBOW = parseInt((time * timeProgressBgW / duration) - (this.CB['timeButton'].offsetWidth * 0.5));
-			if(timeBOW > timeProgressBgW - this.CB['timeButton'].offsetWidth) {
+			if (timeBOW > timeProgressBgW - this.CB['timeButton'].offsetWidth) {
 				timeBOW = timeProgressBgW - this.CB['timeButton'].offsetWidth;
 			}
-			if(timeBOW < 0) {
+			if (timeBOW < 0) {
 				timeBOW = 0;
 			}
 			this.css(this.CB['timeProgress'], 'width', timeBOW + 'px');
@@ -3177,11 +3195,11 @@
 		timeTextHandler: function() { //显示时间/总时间
 			var duration = this.V.duration;
 			var time = this.V.currentTime;
-			if(isNaN(duration)) {
+			if (isNaN(duration)) {
 				duration = 0;
 			}
 			this.CB['timeText'].innerHTML = this.formatTime(time) + ' / ' + this.formatTime(duration);
-			if(this.CB['timeText'].offsetWidth > 0) {
+			if (this.CB['timeText'].offsetWidth > 0) {
 				this.buttonWidth['timeText'] = this.CB['timeText'].offsetWidth;
 			}
 		},
@@ -3192,8 +3210,8 @@
 		bufferEdHandler: function() {
 			var thisTemp = this;
 			var clearTimerBuffer = function() {
-				if(thisTemp.timerBuffer != null) {
-					if(thisTemp.timerBuffer.runing) {
+				if (thisTemp.timerBuffer != null) {
+					if (thisTemp.timerBuffer.runing) {
 						thisTemp.timerBuffer.stop();
 					}
 					thisTemp.timerBuffer = null;
@@ -3201,7 +3219,7 @@
 			};
 			clearTimerBuffer();
 			var bufferFun = function() {
-				if(thisTemp.V.buffered.length > 0) {
+				if (thisTemp.V.buffered.length > 0) {
 					var duration = thisTemp.V.duration;
 					var len = thisTemp.V.buffered.length;
 					var bufferStart = thisTemp.V.buffered.start(len - 1);
@@ -3210,7 +3228,7 @@
 					var loadProgressBgW = thisTemp.CB['timeProgressBg'].offsetWidth;
 					var timeButtonW = thisTemp.CB['timeButton'].offsetWidth;
 					var loadW = parseInt((loadTime * loadProgressBgW / duration) + timeButtonW);
-					if(loadW >= loadProgressBgW) {
+					if (loadW >= loadProgressBgW) {
 						loadW = loadProgressBgW;
 						clearTimerBuffer();
 					}
@@ -3225,13 +3243,13 @@
 			单独计算加载进度
 		*/
 		changeLoad: function(loadTime) {
-			if(this.V == null) {
+			if (this.V == null) {
 				return;
 			}
 			var loadProgressBgW = this.CB['timeProgressBg'].offsetWidth;
 			var timeButtonW = this.CB['timeButton'].offsetWidth;
 			var duration = this.V.duration;
-			if(this.isUndefined(loadTime)) {
+			if (this.isUndefined(loadTime)) {
 				loadTime = this.loadTime;
 			} else {
 				this.loadTime = loadTime;
@@ -3245,8 +3263,8 @@
 		*/
 		judgeIsLive: function() {
 			var thisTemp = this;
-			if(this.timerError != null) {
-				if(this.timerError.runing) {
+			if (this.timerError != null) {
+				if (this.timerError.runing) {
 					this.timerError.stop();
 				}
 				this.timerError = null;
@@ -3256,8 +3274,8 @@
 			var timeupdate = function(event) {
 				thisTemp.timeUpdateHandler();
 			};
-			if(!this.vars['live']) {
-				if(this.V != null && this.playerType == 'html5video') {
+			if (!this.vars['live']) {
+				if (this.V != null && this.playerType == 'html5video') {
 					this.addListener('timeupdate', timeupdate);
 					thisTemp.timeTextHandler();
 					thisTemp.prompt(); //添加提示点
@@ -3267,18 +3285,18 @@
 				}
 			} else {
 				this.removeListener('timeupdate', timeupdate);
-				if(this.timerTime != null) {
+				if (this.timerTime != null) {
 					window.clearInterval(this.timerTime);
 					timerTime = null;
 				}
-				if(this.timerTime != null) {
-					if(this.timerTime.runing) {
+				if (this.timerTime != null) {
+					if (this.timerTime.runing) {
 						this.timerTime.stop();
 					}
 					this.timerTime = null;
 				}
 				var timeFun = function() {
-					if(thisTemp.V != null && !thisTemp.V.paused) {
+					if (thisTemp.V != null && !thisTemp.V.paused) {
 						thisTemp.CB['timeText'].innerHTML = thisTemp.getNowDate();
 					}
 				};
@@ -3302,7 +3320,9 @@
 				success: function(data) {
 					thisTemp.track = thisTemp.parseSrtSubtitles(data);
 					thisTemp.trackIndex = 0;
-					thisTemp.nowTrackShow = { sn: '' };
+					thisTemp.nowTrackShow = {
+						sn: ''
+					};
 				}
 			};
 			this.ajax(obj);
@@ -3313,17 +3333,19 @@
 		*/
 		resetTrack: function() {
 			this.trackIndex = 0;
-			this.nowTrackShow = { sn: '' };
+			this.nowTrackShow = {
+				sn: ''
+			};
 		},
 		/*
 			内部函数
 			根据时间改变读取显示字幕
 		*/
 		trackShowHandler: function() {
-			if(this.track.length < 1) {
+			if (this.track.length < 1) {
 				return;
 			}
-			if(this.trackIndex >= this.track.length) {
+			if (this.trackIndex >= this.track.length) {
 				this.trackIndex = 0;
 			}
 			var nowTrack = this.track[this.trackIndex]; //当前编号对应的字幕内容
@@ -3331,12 +3353,12 @@
 				this.nowTrackShow=当前显示在界面上的内容
 				如果当前时间正好在nowTrack时间内，则需要判断
 			*/
-			if(this.time >= nowTrack['startTime'] && this.time <= nowTrack['endTime']) {
+			if (this.time >= nowTrack['startTime'] && this.time <= nowTrack['endTime']) {
 				/*
 				 	如果当前显示的内容不等于当前需要显示的内容时，则需要显示正确的内容
 				*/
 				var nowShow = this.nowTrackShow;
-				if(nowShow['sn'] != nowTrack['sn']) {
+				if (nowShow['sn'] != nowTrack['sn']) {
 					this.trackHide();
 					this.trackShow(nowTrack);
 				}
@@ -3355,7 +3377,7 @@
 		trackShow: function(track) {
 			this.nowTrackShow = track;
 			var arr = track['content'];
-			for(var i = 0; i < arr.length; i++) {
+			for (var i = 0; i < arr.length; i++) {
 				var obj = {
 					list: [{
 						type: 'text',
@@ -3376,7 +3398,7 @@
 			隐藏字字幕内容
 		*/
 		trackHide: function() {
-			for(var i = 0; i < this.trackElement.length; i++) {
+			for (var i = 0; i < this.trackElement.length; i++) {
 				this.deleteElement(this.trackElement[i]);
 			}
 			this.trackElement = [];
@@ -3389,8 +3411,8 @@
 			var num = this.trackIndex;
 			var arr = this.track;
 			var i = 0;
-			for(i = num; i < arr.length; i++) {
-				if(this.time >= arr[i]['startTime'] && this.time <= arr[i]['endTime']) {
+			for (i = num; i < arr.length; i++) {
+				if (this.time >= arr[i]['startTime'] && this.time <= arr[i]['endTime']) {
 					this.trackIndex = i;
 					break;
 				}
@@ -3402,15 +3424,15 @@
 			在播放和暂停之间切换
 		*/
 		playOrPause: function() {
-			if(this.config['videoClick']) {
-				if(this.V == null) {
+			if (this.config['videoClick']) {
+				if (this.V == null) {
 					return;
 				}
 				// if(this.playerType=='flashplayer'){
 				// 	this.V.playOrPause();
 				// 	return;
 				// }
-				if(this.V.paused) {
+				if (this.V.paused) {
 					this.play();
 				} else {
 					this.pause();
@@ -3422,11 +3444,10 @@
 			播放动作
 		*/
 		play: function() {
-			if(this.V != null && !this.error && this.loaded) {
-				if(this.playerType=='html5video'){
+			if (this.V != null && !this.error && this.loaded) {
+				if (this.playerType == 'html5video') {
 					this.V.play();
-				}
-				else{
+				} else {
 					this.V.videoPlay();
 				}
 			}
@@ -3436,11 +3457,10 @@
 			暂停动作
 		*/
 		pause: function() {
-			if(this.V != null && !this.error && this.loaded) {
-				if(this.playerType=='html5video'){
+			if (this.V != null && !this.error && this.loaded) {
+				if (this.playerType == 'html5video') {
 					this.V.pause();
-				}
-				else{
+				} else {
 					this.V.videoPause();
 				}
 			}
@@ -3450,15 +3470,15 @@
 			跳转时间动作
 		*/
 		seek: function(time) {
-			if(!this.loaded) {
+			if (!this.loaded) {
 				return;
 			}
 			var meta = this.getMetaDate();
 			var duration = meta['duration'];
-			if(duration > 0 && time > duration) {
+			if (duration > 0 && time > duration) {
 				time = duration;
 			}
-			if(this.html5Video && this.playerType == 'html5video' && !this.error) {
+			if (this.html5Video && this.playerType == 'html5video' && !this.error) {
 				this.V.currentTime = time;
 			} else {
 				this.V.seek(time);
@@ -3469,51 +3489,51 @@
 			调节音量/获取音量
 		*/
 		changeVolume: function(vol, bg, button) {
-			if(isNaN(vol) || this.isUndefined(vol)) {
+			if (isNaN(vol) || this.isUndefined(vol)) {
 				vol = 0;
 			}
-			if(!this.loaded) {
+			if (!this.loaded) {
 				this.vars['volume'] = vol;
 			}
-			if(!this.html5Video) {
+			if (!this.html5Video) {
 				this.V.changeVolume(vol);
 				return;
 			}
 			try {
-				if(this.isUndefined(bg)) {
+				if (this.isUndefined(bg)) {
 					bg = true;
 				}
-			} catch(e) {}
+			} catch (e) {}
 			try {
-				if(this.isUndefined(button)) {
+				if (this.isUndefined(button)) {
 					button = true;
 				}
-			} catch(e) {}
-			if(vol<0){
-				vol=0;
+			} catch (e) {}
+			if (vol < 0) {
+				vol = 0;
 			}
-			if(vol>1){
-				vol=1;
+			if (vol > 1) {
+				vol = 1;
 			}
 			this.V.volume = vol;
 			this.volume = vol;
-			if(bg) {
+			if (bg) {
 				var bgW = vol * this.CB['volumeBg'].offsetWidth;
-				if(bgW < 0) {
+				if (bgW < 0) {
 					bgW = 0;
 				}
-				if(bgW > this.CB['volumeBg'].offsetWidth) {
+				if (bgW > this.CB['volumeBg'].offsetWidth) {
 					bgW = this.CB['volumeBg'].offsetWidth;
 				}
 				this.css(this.CB['volumeUp'], 'width', bgW + 'px');
 			}
 
-			if(button) {
+			if (button) {
 				var buLeft = parseInt(this.CB['volumeUp'].offsetWidth - (this.CB['volumeBO'].offsetWidth * 0.5));
-				if(buLeft > this.CB['volumeBg'].offsetWidth - this.CB['volumeBO'].offsetWidth) {
+				if (buLeft > this.CB['volumeBg'].offsetWidth - this.CB['volumeBO'].offsetWidth) {
 					buLeft = this.CB['volumeBg'].offsetWidth - this.CB['volumeBO'].offsetWidth
 				}
-				if(buLeft < 0) {
+				if (buLeft < 0) {
 					buLeft = 0;
 				}
 				this.css(this.CB['volumeBO'], 'left', buLeft + 'px');
@@ -3524,7 +3544,7 @@
 			全屏/退出全屏动作，该动作只能是用户操作才可以触发，比如用户点击按钮触发该事件
 		*/
 		switchFull: function() {
-			if(this.full) {
+			if (this.full) {
 				this.quitFullScreen();
 			} else {
 				this.fullScreen();
@@ -3535,15 +3555,15 @@
 			全屏动作，该动作只能是用户操作才可以触发，比如用户点击按钮触发该事件
 		*/
 		fullScreen: function() {
-			if(this.html5Video && this.playerType == 'html5video') {
+			if (this.html5Video && this.playerType == 'html5video') {
 				var element = this.PD;
-				if(element.requestFullscreen) {
+				if (element.requestFullscreen) {
 					element.requestFullscreen();
-				} else if(element.mozRequestFullScreen) {
+				} else if (element.mozRequestFullScreen) {
 					element.mozRequestFullScreen();
-				} else if(element.webkitRequestFullscreen) {
+				} else if (element.webkitRequestFullscreen) {
 					element.webkitRequestFullscreen();
-				} else if(element.msRequestFullscreen) {
+				} else if (element.msRequestFullscreen) {
 					element.msRequestFullscreen();
 				}
 				this.judgeFullScreen();
@@ -3554,18 +3574,18 @@
 			退出全屏动作
 		*/
 		quitFullScreen: function() {
-			if(this.html5Video && this.playerType == 'html5video') {
-				if(document.exitFullscreen) {
+			if (this.html5Video && this.playerType == 'html5video') {
+				if (document.exitFullscreen) {
 					document.exitFullscreen();
-				} else if(document.msExitFullscreen) {
+				} else if (document.msExitFullscreen) {
 					document.msExitFullscreen();
-				} else if(document.mozCancelFullScreen) {
+				} else if (document.mozCancelFullScreen) {
 					document.mozCancelFullScreen();
-				} else if(document.oRequestFullscreen) {
+				} else if (document.oRequestFullscreen) {
 					document.oCancelFullScreen();
-				} else if(document.requestFullscreen) {
+				} else if (document.requestFullscreen) {
 					document.requestFullscreen();
-				} else if(document.webkitExitFullscreen) {
+				} else if (document.webkitExitFullscreen) {
 					document.webkitExitFullscreen();
 				} else {
 					this.css(document.documentElement, 'cssText', '');
@@ -3580,19 +3600,19 @@
 			改变播放器尺寸
 		*/
 		changeSize: function(w, h) {
-			if(this.isUndefined(w)) {
+			if (this.isUndefined(w)) {
 				w = 0;
 			}
-			if(this.isUndefined(h)) {
+			if (this.isUndefined(h)) {
 				h = 0;
 			}
-			if(w > 0) {
+			if (w > 0) {
 				this.css(this.CD, 'width', w + 'px');
 			}
-			if(h > 0) {
+			if (h > 0) {
 				this.css(this.CD, 'height', h + 'px');
 			}
-			if(this.html5Video) {
+			if (this.html5Video) {
 				this.elementCoordinate();
 			}
 		},
@@ -3615,15 +3635,14 @@
 			获取元数据部分
 		*/
 		getMetaDate: function() {
-			if(!this.loaded || this.V==null) {
+			if (!this.loaded || this.V == null) {
 				return false;
 			}
-			if(this.playerType == 'html5video') {
-				var duration=0;
-				try{
-					duration=!isNaN(this.V.duration) ? this.V.duration : 0;
-				}
-				catch(event){}
+			if (this.playerType == 'html5video') {
+				var duration = 0;
+				try {
+					duration = !isNaN(this.V.duration) ? this.V.duration : 0;
+				} catch (event) {}
 				var data = {
 					duration: duration,
 					volume: this.V.volume,
@@ -3645,11 +3664,11 @@
 		*/
 		getVideoUrl: function() {
 			var arr = [];
-			if(this.V.src) {
+			if (this.V.src) {
 				arr.push(this.V.src);
 			} else {
 				var uArr = this.V.childNodes;
-				for(var i = 0; i < uArr.length; i++) {
+				for (var i = 0; i < uArr.length; i++) {
 					arr.push(uArr[i].src);
 				}
 			}
@@ -3676,19 +3695,19 @@
 			};
 			obj = this.standardization(obj, attribute);
 			var list = obj['list'];
-			if(list == null) {
+			if (list == null) {
 				return '';
 			}
 			var id = 'element' + this.randomString(10);
 			var ele = document.createElement('div');
 			ele.className = id;
-			if(obj['x']) {
+			if (obj['x']) {
 				ele.setAttribute('data-x', obj['x']);
 			}
-			if(obj['y']) {
+			if (obj['y']) {
 				ele.setAttribute('data-y', obj['y']);
 			}
-			if(obj['position'] != null) {
+			if (obj['position'] != null) {
 				ele.setAttribute('data-position', obj['position'].join(','));
 			}
 
@@ -3699,18 +3718,18 @@
 				filter: 'alpha(opacity:' + obj['alpha'] + ')',
 				opacity: obj['alpha'].toString(),
 				width: '800px',
-				zIndex: '20'
+				// zIndex: '20'
 			});
 			var bgid = 'elementbg' + this.randomString(10);
 			var bgAlpha = obj['backAlpha'].toString();
 			var bgColor = obj['backgroundColor'];
 			var html = '';
 			var idArr = [];
-			if(!this.isUndefined(list) && list.length > 0) {
+			if (!this.isUndefined(list) && list.length > 0) {
 				var textObj, returnObj;
-				for(i = 0; i < list.length; i++) {
+				for (i = 0; i < list.length; i++) {
 					var newEleid = 'elementnew' + this.randomString(10);
-					switch(list[i]['type']) {
+					switch (list[i]['type']) {
 						case 'image':
 							textObj = {
 								type: 'image',
@@ -3765,10 +3784,10 @@
 			eid.innerHTML = '<div class="' + bgid + '"></div><div class="' + bgid + '_c">' + html + '</div>';
 			this.css(bgid + '_c', {
 				position: 'absolute',
-				zIndex: '2'
+				// zIndex: '2'
 			});
-			for(i = 0; i < idArr.length; i++) {
-				switch(list[i]['type']) {
+			for (i = 0; i < idArr.length; i++) {
+				switch (list[i]['type']) {
 					case 'image':
 						this.css(idArr[i], {
 							float: 'left',
@@ -3803,7 +3822,7 @@
 							paddingBottom: list[i]['paddingBottom'] + 'px',
 							whiteSpace: 'nowrap',
 							position: 'absolute',
-							zIndex: '3'
+							// zIndex: '3'
 						});
 						this.css(idArr[i], {
 							float: 'left',
@@ -3822,7 +3841,7 @@
 							borderRadius: list[i]['backRadius'] + 'px',
 							backgroundColor: list[i]['backgroundColor'],
 							position: 'absolute',
-							zIndex: '2'
+							// zIndex: '2'
 						});
 						break;
 					default:
@@ -3837,7 +3856,7 @@
 				opacity: bgAlpha,
 				backgroundColor: bgColor,
 				borderRadius: obj['backRadius'] + 'px',
-				zIndex: '1'
+				// zIndex: '1'
 			});
 			this.css(eid, {
 				width: this.getByElement(bgid).offsetWidth + 'px',
@@ -3860,7 +3879,7 @@
 			// 	return this.V.getElement(element);
 			// }
 			var ele = element;
-			if(typeof(element) == 'string') {
+			if (typeof(element) == 'string') {
 				ele = this.getByElement(element);
 			}
 			var coor = this.getCoor(ele);
@@ -3880,7 +3899,7 @@
 			// if(this.playerType == 'flashplayer') {
 			// 	return this.V.calculationCoor(ele);
 			// }
-			if(ele==[]){
+			if (ele == []) {
 				return;
 			}
 			var x, y, position = [];
@@ -3888,28 +3907,28 @@
 				h = this.PD.offsetHeight;
 			var ew = ele.offsetWidth,
 				eh = ele.offsetHeight;
-			if(!this.isUndefined(ele.dataset['x'])) {
+			if (!this.isUndefined(ele.dataset['x'])) {
 				x = ele.dataset['x']
 			}
-			if(!this.isUndefined(ele.dataset['y'])) {
+			if (!this.isUndefined(ele.dataset['y'])) {
 				y = ele.dataset['y']
 			}
-			if(!this.isUndefined(ele.dataset['position'])) {
+			if (!this.isUndefined(ele.dataset['position'])) {
 				position = ele.dataset['position'].split(',');
 			}
-			if(position.length > 0) {
+			if (position.length > 0) {
 				position.push(null, null, null, null);
 				var i = 0;
-				for(i = 0; i < position.length; i++) {
-					if(this.isUndefined(position[i]) || position[i] == null || position[i] == 'null' || position[i] == '') {
+				for (i = 0; i < position.length; i++) {
+					if (this.isUndefined(position[i]) || position[i] == null || position[i] == 'null' || position[i] == '') {
 						position[i] = null;
 					} else {
 						position[i] = parseFloat(position[i]);
 					}
 				}
-				
-				if(position[2] == null) {
-					switch(position[0]) {
+
+				if (position[2] == null) {
+					switch (position[0]) {
 						case 0:
 							x = 0;
 							break;
@@ -3921,7 +3940,7 @@
 							break;
 					}
 				} else {
-					switch(position[0]) {
+					switch (position[0]) {
 						case 0:
 							x = position[2];
 							break;
@@ -3933,8 +3952,8 @@
 							break;
 					}
 				}
-				if(position[3] == null) {
-					switch(position[1]) {
+				if (position[3] == null) {
+					switch (position[1]) {
 						case 0:
 							y = 0;
 							break;
@@ -3946,7 +3965,7 @@
 							break;
 					}
 				} else {
-					switch(position[1]) {
+					switch (position[1]) {
 						case 0:
 							y = position[3];
 							break;
@@ -3959,10 +3978,10 @@
 					}
 				}
 			} else {
-				if(x.substring(x.length - 1, x.length) == '%') {
+				if (x.substring(x.length - 1, x.length) == '%') {
 					x = Math.floor(parseInt(x.substring(0, x.length - 1)) * w * 0.01);
 				}
-				if(y.substring(y.length - 1, y.length) == '%') {
+				if (y.substring(y.length - 1, y.length) == '%') {
 					y = Math.floor(parseInt(y.substring(0, y.length - 1)) * h * 0.01);
 				}
 			}
@@ -3978,8 +3997,8 @@
 			修改新增元件的坐标
 		*/
 		changeElementCoor: function() {
-			for(var i = 0; i < this.elementArr.length; i++) {
-				if(this.getByElement(this.elementArr[i])!=[]){
+			for (var i = 0; i < this.elementArr.length; i++) {
+				if (this.getByElement(this.elementArr[i]) != []) {
 					var c = this.calculationCoor(this.getByElement(this.elementArr[i]));
 					this.css(this.elementArr[i], {
 						top: c['y'] + 'px',
@@ -4013,7 +4032,7 @@
 						return -c * (t /= d) * (t - 2) + b;
 					},
 					easeInOut: function(t, b, c, d) {
-						if((t /= d / 2) < 1) return c / 2 * t * t + b;
+						if ((t /= d / 2) < 1) return c / 2 * t * t + b;
 						return -c / 2 * ((--t) * (t - 2) - 1) + b;
 					}
 				},
@@ -4025,7 +4044,7 @@
 						return c * ((t = t / d - 1) * t * t + 1) + b;
 					},
 					easeInOut: function(t, b, c, d) {
-						if((t /= d / 2) < 1) return c / 2 * t * t * t + b;
+						if ((t /= d / 2) < 1) return c / 2 * t * t * t + b;
 						return c / 2 * ((t -= 2) * t * t + 2) + b;
 					}
 				},
@@ -4037,7 +4056,7 @@
 						return -c * ((t = t / d - 1) * t * t * t - 1) + b;
 					},
 					easeInOut: function(t, b, c, d) {
-						if((t /= d / 2) < 1) return c / 2 * t * t * t * t + b;
+						if ((t /= d / 2) < 1) return c / 2 * t * t * t * t + b;
 						return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
 					}
 				},
@@ -4049,7 +4068,7 @@
 						return c * ((t = t / d - 1) * t * t * t * t + 1) + b;
 					},
 					easeInOut: function(t, b, c, d) {
-						if((t /= d / 2) < 1) return c / 2 * t * t * t * t * t + b;
+						if ((t /= d / 2) < 1) return c / 2 * t * t * t * t * t + b;
 						return c / 2 * ((t -= 2) * t * t * t * t + 2) + b;
 					}
 				},
@@ -4066,15 +4085,15 @@
 				},
 				Exponential: {
 					easeIn: function(t, b, c, d) {
-						return(t == 0) ? b : c * Math.pow(2, 10 * (t / d - 1)) + b;
+						return (t == 0) ? b : c * Math.pow(2, 10 * (t / d - 1)) + b;
 					},
 					easeOut: function(t, b, c, d) {
-						return(t == d) ? b + c : c * (-Math.pow(2, -10 * t / d) + 1) + b;
+						return (t == d) ? b + c : c * (-Math.pow(2, -10 * t / d) + 1) + b;
 					},
 					easeInOut: function(t, b, c, d) {
-						if(t == 0) return b;
-						if(t == d) return b + c;
-						if((t /= d / 2) < 1) return c / 2 * Math.pow(2, 10 * (t - 1)) + b;
+						if (t == 0) return b;
+						if (t == d) return b + c;
+						if ((t /= d / 2) < 1) return c / 2 * Math.pow(2, 10 * (t - 1)) + b;
 						return c / 2 * (-Math.pow(2, -10 * --t) + 2) + b;
 					}
 				},
@@ -4086,46 +4105,55 @@
 						return c * Math.sqrt(1 - (t = t / d - 1) * t) + b;
 					},
 					easeInOut: function(t, b, c, d) {
-						if((t /= d / 2) < 1) return -c / 2 * (Math.sqrt(1 - t * t) - 1) + b;
+						if ((t /= d / 2) < 1) return -c / 2 * (Math.sqrt(1 - t * t) - 1) + b;
 						return c / 2 * (Math.sqrt(1 - (t -= 2) * t) + 1) + b;
 					}
 				},
 				Elastic: {
 					easeIn: function(t, b, c, d, a, p) {
-						if(t == 0) return b;
-						if((t /= d) == 1) return b + c;
-						if(!p) p = d * .3;
-						if(!a || a < Math.abs(c)) { a = c; var s = p / 4; } else var s = p / (2 * Math.PI) * Math.asin(c / a);
+						if (t == 0) return b;
+						if ((t /= d) == 1) return b + c;
+						if (!p) p = d * .3;
+						if (!a || a < Math.abs(c)) {
+							a = c;
+							var s = p / 4;
+						} else var s = p / (2 * Math.PI) * Math.asin(c / a);
 						return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
 					},
 					easeOut: function(t, b, c, d, a, p) {
-						if(t == 0) return b;
-						if((t /= d) == 1) return b + c;
-						if(!p) p = d * .3;
-						if(!a || a < Math.abs(c)) { a = c; var s = p / 4; } else var s = p / (2 * Math.PI) * Math.asin(c / a);
-						return(a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + c + b);
+						if (t == 0) return b;
+						if ((t /= d) == 1) return b + c;
+						if (!p) p = d * .3;
+						if (!a || a < Math.abs(c)) {
+							a = c;
+							var s = p / 4;
+						} else var s = p / (2 * Math.PI) * Math.asin(c / a);
+						return (a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + c + b);
 					},
 					easeInOut: function(t, b, c, d, a, p) {
-						if(t == 0) return b;
-						if((t /= d / 2) == 2) return b + c;
-						if(!p) p = d * (.3 * 1.5);
-						if(!a || a < Math.abs(c)) { a = c; var s = p / 4; } else var s = p / (2 * Math.PI) * Math.asin(c / a);
-						if(t < 1) return -.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
+						if (t == 0) return b;
+						if ((t /= d / 2) == 2) return b + c;
+						if (!p) p = d * (.3 * 1.5);
+						if (!a || a < Math.abs(c)) {
+							a = c;
+							var s = p / 4;
+						} else var s = p / (2 * Math.PI) * Math.asin(c / a);
+						if (t < 1) return -.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
 						return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p) * .5 + c + b;
 					}
 				},
 				Back: {
 					easeIn: function(t, b, c, d, s) {
-						if(s == undefined) s = 1.70158;
+						if (s == undefined) s = 1.70158;
 						return c * (t /= d) * t * ((s + 1) * t - s) + b;
 					},
 					easeOut: function(t, b, c, d, s) {
-						if(s == undefined) s = 1.70158;
+						if (s == undefined) s = 1.70158;
 						return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
 					},
 					easeInOut: function(t, b, c, d, s) {
-						if(s == undefined) s = 1.70158;
-						if((t /= d / 2) < 1) return c / 2 * (t * t * (((s *= (1.525)) + 1) * t - s)) + b;
+						if (s == undefined) s = 1.70158;
+						if ((t /= d / 2) < 1) return c / 2 * (t * t * (((s *= (1.525)) + 1) * t - s)) + b;
 						return c / 2 * ((t -= 2) * t * (((s *= (1.525)) + 1) * t + s) + 2) + b;
 					}
 				},
@@ -4134,18 +4162,18 @@
 						return c - Tween.Bounce.easeOut(d - t, 0, c, d) + b;
 					},
 					easeOut: function(t, b, c, d) {
-						if((t /= d) < (1 / 2.75)) {
+						if ((t /= d) < (1 / 2.75)) {
 							return c * (7.5625 * t * t) + b;
-						} else if(t < (2 / 2.75)) {
+						} else if (t < (2 / 2.75)) {
 							return c * (7.5625 * (t -= (1.5 / 2.75)) * t + .75) + b;
-						} else if(t < (2.5 / 2.75)) {
+						} else if (t < (2.5 / 2.75)) {
 							return c * (7.5625 * (t -= (2.25 / 2.75)) * t + .9375) + b;
 						} else {
 							return c * (7.5625 * (t -= (2.625 / 2.75)) * t + .984375) + b;
 						}
 					},
 					easeInOut: function(t, b, c, d) {
-						if(t < d / 2) return Tween.Bounce.easeIn(t * 2, 0, c, d) * .5 + b;
+						if (t < d / 2) return Tween.Bounce.easeIn(t * 2, 0, c, d) * .5 + b;
 						else return Tween.Bounce.easeOut(t * 2 - d, 0, c, d) * .5 + c * .5 + b;
 					}
 				}
@@ -4181,20 +4209,23 @@
 				callBack: null
 			};
 			obj = this.standardization(obj, attribute);
-			if(obj['element'] == null || obj['speed'] == 0) {
+			if (obj['element'] == null || obj['speed'] == 0) {
 				return false;
 			}
 			var w = this.PD.offsetWidth,
 				h = this.PD.offsetHeight;
 			var effArr = (obj['effect'] + '.').split('.');
 			var tweenFun = this.tween()[effArr[0]][effArr[1]];
-			var eleCoor = { x: 0, y: 0 };
-			if(this.isUndefined(tweenFun)) {
+			var eleCoor = {
+				x: 0,
+				y: 0
+			};
+			if (this.isUndefined(tweenFun)) {
 				return false;
 			}
 			//先将该元件从元件数组里删除，让其不再跟随播放器的尺寸改变而改变位置
 			var def = this.arrIndexOf(this.elementArr, obj['element'].className);
-			if(def > -1) {
+			if (def > -1) {
 				this.elementArr.splice(def, 1);
 			}
 			//var run = true;
@@ -4209,25 +4240,25 @@
 			var tweenObj = null;
 			var start = obj['start'] == null ? '' : obj['start'].toString();
 			var end = obj['end'] == null ? '' : obj['end'].toString();
-			switch(obj['parameter']) {
+			switch (obj['parameter']) {
 				case 'x':
-					if(obj['start'] == null) {
+					if (obj['start'] == null) {
 						b = pm['x'];
 					} else {
-						if(start.substring(start.length - 1, start.length) == '%') {
+						if (start.substring(start.length - 1, start.length) == '%') {
 							b = parseInt(start) * w * 0.01;
 						} else {
 							b = parseInt(start);
 						}
 
 					}
-					if(obj['end'] == null) {
+					if (obj['end'] == null) {
 						c = pm['x'] - b;
 					} else {
-						if(end.substring(end.length - 1, end.length) == '%') {
+						if (end.substring(end.length - 1, end.length) == '%') {
 							c = parseInt(end) * w * 0.01 - b;
-						} else if(end.substring(0, 1) == '-' || end.substring(0, 1) == '+') {
-							if(typeof(obj['end']) == 'number') {
+						} else if (end.substring(0, 1) == '-' || end.substring(0, 1) == '+') {
+							if (typeof(obj['end']) == 'number') {
 								c = parseInt(obj['end']) - b;
 							} else {
 								c = parseInt(end);
@@ -4239,23 +4270,23 @@
 					}
 					break;
 				case 'y':
-					if(obj['start'] == null) {
+					if (obj['start'] == null) {
 						b = pm['y'];
 					} else {
-						if(start.substring(start.length - 1, start.length) == '%') {
+						if (start.substring(start.length - 1, start.length) == '%') {
 							b = parseInt(start) * h * 0.01;
 						} else {
 							b = parseInt(start);
 						}
 
 					}
-					if(obj['end'] == null) {
+					if (obj['end'] == null) {
 						c = pm['y'] - b;
 					} else {
-						if(end.substring(end.length - 1, end.length) == '%') {
+						if (end.substring(end.length - 1, end.length) == '%') {
 							c = parseInt(end) * h * 0.01 - b;
-						} else if(end.substring(0, 1) == '-' || end.substring(0, 1) == '+') {
-							if(typeof(obj['end']) == 'number') {
+						} else if (end.substring(0, 1) == '-' || end.substring(0, 1) == '+') {
+							if (typeof(obj['end']) == 'number') {
 								c = parseInt(obj['end']) - b;
 							} else {
 								c = parseInt(end);
@@ -4266,23 +4297,23 @@
 					}
 					break;
 				case 'alpha':
-					if(obj['start'] == null) {
+					if (obj['start'] == null) {
 						b = pm['alpha'] * 100;
 					} else {
-						if(start.substring(start.length - 1, start.length) == '%') {
+						if (start.substring(start.length - 1, start.length) == '%') {
 							b = parseInt(obj['start']);
 						} else {
 							b = parseInt(obj['start'] * 100);
 						}
 
 					}
-					if(obj['end'] == null) {
+					if (obj['end'] == null) {
 						c = pm['alpha'] * 100 - b;
 					} else {
-						if(end.substring(end.length - 1, end.length) == '%') {
+						if (end.substring(end.length - 1, end.length) == '%') {
 							c = parseInt(end) - b;
-						} else if(end.substring(0, 1) == '-' || end.substring(0, 1) == '+') {
-							if(typeof(obj['end']) == 'number') {
+						} else if (end.substring(0, 1) == '-' || end.substring(0, 1) == '+') {
+							if (typeof(obj['end']) == 'number') {
 								c = parseInt(obj['end']) * 100 - b;
 							} else {
 								c = parseInt(obj['end']) * 100;
@@ -4295,35 +4326,35 @@
 			}
 			var callBack = function() {
 				var index = thisTemp.arrIndexOf(thisTemp.animateElementArray, animateId);
-				if(index > -1) {
+				if (index > -1) {
 					thisTemp.animateArray.splice(index, 1);
 					thisTemp.animateElementArray.splice(index, 1);
 				}
 				index = thisTemp.arrIndexOf(thisTemp.animatePauseArray, animateId);
-				if(index > -1) {
+				if (index > -1) {
 					thisTemp.animatePauseArray.splice(index, 1);
 				}
-				if(obj['callBack'] != null && obj['element'] && obj['callBack'] != 'callBack' && obj['callBack'] != 'tweenX' && obj['tweenY'] != 'callBack' && obj['callBack'] != 'tweenAlpha') {
+				if (obj['callBack'] != null && obj['element'] && obj['callBack'] != 'callBack' && obj['callBack'] != 'tweenX' && obj['tweenY'] != 'callBack' && obj['callBack'] != 'tweenAlpha') {
 					var cb = eval(obj['callBack']);
 					cb(obj['element']);
 					obj['callBack'] = null;
 				}
 			};
 			var stopTween = function() {
-				if(timerTween != null) {
-					if(timerTween.runing) {
+				if (timerTween != null) {
+					if (timerTween.runing) {
 						timerTween.stop();
 					}
 					timerTween = null;
 				}
 			};
 			var tweenX = function() {
-				if(t < d) {
+				if (t < d) {
 					t += 10;
 					css = {
 						left: Math.ceil(tweenFun(t, b, c, d)) + 'px'
 					};
-					if(obj['static']) {
+					if (obj['static']) {
 						eleCoor = thisTemp.calculationCoor(obj['element']);
 						css['top'] = eleCoor['y'] + 'px';
 					}
@@ -4336,12 +4367,12 @@
 				}
 			};
 			var tweenY = function() {
-				if(t < d) {
+				if (t < d) {
 					t += 10;
 					css = {
 						top: Math.ceil(tweenFun(t, b, c, d)) + 'px'
 					};
-					if(obj['static']) {
+					if (obj['static']) {
 						eleCoor = thisTemp.calculationCoor(obj['element']);
 						css['left'] = eleCoor['x'] + 'px';
 					}
@@ -4353,7 +4384,7 @@
 				}
 			};
 			var tweenAlpha = function() {
-				if(t < d) {
+				if (t < d) {
 					t += 10;
 					eleCoor = thisTemp.calculationCoor(obj['element']);
 					var ap = Math.ceil(tweenFun(t, b, c, d)) * 0.01;
@@ -4361,7 +4392,7 @@
 						filter: 'alpha(opacity:' + ap + ')',
 						opacity: ap.toString()
 					};
-					if(obj['static']) {
+					if (obj['static']) {
 						eleCoor = thisTemp.calculationCoor(obj['element']);
 						css['top'] = eleCoor['y'] + 'px';
 						css['left'] = eleCoor['x'] + 'px';
@@ -4373,7 +4404,7 @@
 					callBack();
 				}
 			};
-			switch(obj['parameter']) {
+			switch (obj['parameter']) {
 				case 'x':
 					tweenObj = tweenX;
 					break;
@@ -4387,19 +4418,19 @@
 					break;
 			}
 			timerTween = new thisTemp.timer(10, tweenObj);
-			if(obj['overStop']) {
+			if (obj['overStop']) {
 				var mouseOver = function() {
-					if(timerTween != null && timerTween.runing) {
+					if (timerTween != null && timerTween.runing) {
 						timerTween.stop();
 					}
 				};
 				this.addListener('mouseover', mouseOver, obj['element']);
 				var mouseOut = function() {
 					var start = true;
-					if(obj['pauseStop'] && thisTemp.getMetaDate()['paused']) {
+					if (obj['pauseStop'] && thisTemp.getMetaDate()['paused']) {
 						start = false;
 					}
-					if(timerTween != null && !timerTween.runing && start) {
+					if (timerTween != null && !timerTween.runing && start) {
 						timerTween.start();
 					}
 				};
@@ -4408,7 +4439,7 @@
 
 			this.animateArray.push(timerTween);
 			this.animateElementArray.push(animateId);
-			if(obj['pauseStop']) {
+			if (obj['pauseStop']) {
 				this.animatePauseArray.push(animateId);
 			}
 			return animateId;
@@ -4423,18 +4454,18 @@
 			// 	return;
 			// }
 			var arr = [];
-			if(id != '' && !this.isUndefined(id) && id != 'pause') {
+			if (id != '' && !this.isUndefined(id) && id != 'pause') {
 				arr.push(id);
 			} else {
-				if(id === 'pause') {
+				if (id === 'pause') {
 					arr = this.animatePauseArray;
 				} else {
 					arr = this.animateElementArray;
 				}
 			}
-			for(var i = 0; i < arr.length; i++) {
+			for (var i = 0; i < arr.length; i++) {
 				var index = this.arrIndexOf(this.animateElementArray, arr[i]);
-				if(index > -1) {
+				if (index > -1) {
 					this.animateArray[index].start();
 				}
 			}
@@ -4450,18 +4481,18 @@
 			// 	return;
 			// }
 			var arr = [];
-			if(id != '' && !this.isUndefined(id) && id != 'pause') {
+			if (id != '' && !this.isUndefined(id) && id != 'pause') {
 				arr.push(id);
 			} else {
-				if(id === 'pause') {
+				if (id === 'pause') {
 					arr = this.animatePauseArray;
 				} else {
 					arr = this.animateElementArray;
 				}
 			}
-			for(var i = 0; i < arr.length; i++) {
+			for (var i = 0; i < arr.length; i++) {
 				var index = this.arrIndexOf(this.animateElementArray, arr[i]);
-				if(index > -1) {
+				if (index > -1) {
 					this.animateArray[index].stop();
 				}
 			}
@@ -4472,7 +4503,7 @@
 		*/
 		deleteAnimate: function(id) {
 			var index = this.arrIndexOf(this.animateElementArray, id);
-			if(index > -1) {
+			if (index > -1) {
 				this.animateArray.splice(index, 1);
 				this.animateElementArray.splice(index, 1);
 			}
@@ -4491,7 +4522,7 @@
 			// }
 			//先将该元件从元件数组里删除，让其不再跟随播放器的尺寸改变而改变位置
 			var def = this.arrIndexOf(this.elementArr, ele.className);
-			if(def > -1) {
+			if (def > -1) {
 				this.elementArr.splice(def, 1);
 			}
 			this.deleteAnimate(ele);
@@ -4505,35 +4536,35 @@
 			根据ID获取元素对象
 		*/
 		getByElement: function(obj, parent) {
-			if(this.isUndefined(parent)) {
+			if (this.isUndefined(parent)) {
 				parent = document;
 			}
 			var num = obj.substr(0, 1);
 			var res = [];
-			if(num != '#') {
-				if(num == '.') {
+			if (num != '#') {
+				if (num == '.') {
 					obj = obj.substr(1, obj.length);
 				}
-				if(parent.getElementsByClassName) {
+				if (parent.getElementsByClassName) {
 					res = parent.getElementsByClassName(obj);
 				} else {
 					var reg = new RegExp(' ' + obj + ' ', 'i');
 					var ele = parent.getElementsByTagName('*');
-					
-					for(var i = 0; i < ele.length; i++) {
-						if(reg.test(' ' + ele[i].className + ' ')) {
+
+					for (var i = 0; i < ele.length; i++) {
+						if (reg.test(' ' + ele[i].className + ' ')) {
 							res.push(ele[i]);
 						}
 					}
 				}
-				
-				if(res.length > 0) {
+
+				if (res.length > 0) {
 					return res[0];
 				} else {
 					return res;
 				}
 			} else {
-				if(num == '#') {
+				if (num == '#') {
 					obj = obj.substr(1, obj.length);
 				}
 				return document.getElementById(obj);
@@ -4562,22 +4593,22 @@
 		css: function(elem, attribute, value) {
 			var i = 0;
 			var k = '';
-			if(typeof(elem) == 'object') { //对象或数组
-				if(!this.isUndefined(typeof(elem.length))) { //说明是数组
-					for(i = 0; i < elem.length; i++) {
+			if (typeof(elem) == 'object') { //对象或数组
+				if (!this.isUndefined(typeof(elem.length))) { //说明是数组
+					for (i = 0; i < elem.length; i++) {
 						var el;
-						if(typeof(elem[i]) == 'string') {
+						if (typeof(elem[i]) == 'string') {
 							el = this.getByElement(elem[i])
 						} else {
 							el = elem[i];
 						}
-						if(typeof(attribute) != 'object') {
-							if(!this.isUndefined(value)) {
+						if (typeof(attribute) != 'object') {
+							if (!this.isUndefined(value)) {
 								el.style[attribute] = value;
 							}
 						} else {
-							for(k in attribute) {
-								if(!this.isUndefined(attribute[k])) {
+							for (k in attribute) {
+								if (!this.isUndefined(attribute[k])) {
 									el.style[k] = attribute[k];
 								}
 							}
@@ -4587,23 +4618,23 @@
 				}
 
 			}
-			if(typeof(elem) == 'string') {
+			if (typeof(elem) == 'string') {
 				elem = this.getByElement(elem);
 			}
 
-			if(typeof(attribute) != 'object') {
-				if(!this.isUndefined(value)) {
+			if (typeof(attribute) != 'object') {
+				if (!this.isUndefined(value)) {
 					elem.style[attribute] = value;
 				} else {
-					if(!this.isUndefined(elem.style[attribute])) {
+					if (!this.isUndefined(elem.style[attribute])) {
 						return elem.style[attribute];
 					} else {
 						return false;
 					}
 				}
 			} else {
-				for(k in attribute) {
-					if(!this.isUndefined(attribute[k])) {
+				for (k in attribute) {
+					if (!this.isUndefined(attribute[k])) {
 						elem.style[k] = attribute[k];
 					}
 				}
@@ -4616,10 +4647,10 @@
 		*/
 		isUndefined: function(value) {
 			try {
-				if(value == 'undefined' || value == undefined) {
+				if (value == 'undefined' || value == undefined) {
 					return true;
 				}
-			} catch(event) {}
+			} catch (event) {}
 			return false;
 		},
 
@@ -4638,34 +4669,34 @@
 			// 	this.V.addListener(e, ff);
 			// 	return;
 			// }
-			if(this.isUndefined(t)) {
+			if (this.isUndefined(t)) {
 				t = false
 			}
-			if(e == 'full') {
+			if (e == 'full') {
 				this.fullFunArr.push(f);
 				return;
 			}
-			if(e == 'error' && this.isUndefined(d)) {
+			if (e == 'error' && this.isUndefined(d)) {
 				this.errorFunArr.push(f);
 				return;
 			}
-			if(e == 'videochange') {
+			if (e == 'videochange') {
 				this.videoChangeFunArr.push(f);
 				return;
 			}
 			var o = this.V;
-			if(!this.isUndefined(d)) {
+			if (!this.isUndefined(d)) {
 				o = d;
 			}
 			this.listenerArr.push([e, f, d, t]);
-			if(o.addEventListener) {
+			if (o.addEventListener) {
 				try {
 					o.addEventListener(e, f, t);
-				} catch(event) {}
-			} else if(o.attachEvent) {
+				} catch (event) {}
+			} else if (o.attachEvent) {
 				try {
 					o.attachEvent('on' + e, f);
-				} catch(event) {}
+				} catch (event) {}
 			} else {
 				o['on' + e] = f;
 			}
@@ -4680,40 +4711,40 @@
 			// if(this.playerType=='flashplayer' && this.getParameterNames(f) && this.isUndefined(d)) {
 			// 	return;
 			// }
-			if(this.isUndefined(t)) {
+			if (this.isUndefined(t)) {
 				t = false
 			}
-			if(e == 'full') {
+			if (e == 'full') {
 				this.delFullFunArr(f);
 				return;
 			}
-			if(e == 'error') {
+			if (e == 'error') {
 				this.delErrorFunArr(f);
 				return;
 			}
-			if(e == 'videochange') {
+			if (e == 'videochange') {
 				this.delVideoChangeFunArr(f);
 				return;
 			}
 			var o = this.V;
-			if(!this.isUndefined(d)) {
+			if (!this.isUndefined(d)) {
 				o = d;
 			}
-			for(var i = 0; i < this.listenerArr.length; i++) {
-				if([e, f, d, t] == this.listenerArr[i]) {
+			for (var i = 0; i < this.listenerArr.length; i++) {
+				if ([e, f, d, t] == this.listenerArr[i]) {
 					this.listenerArr.splice(i, 1);
 					break;
 				}
 			}
-			if(o.removeEventListener) {
+			if (o.removeEventListener) {
 				try {
 					this.addNum--;
 					o.removeEventListener(e, f, t);
-				} catch(e) {}
-			} else if(o.detachEvent) {
+				} catch (e) {}
+			} else if (o.detachEvent) {
 				try {
 					o.detachEvent('on' + e, f);
-				} catch(e) {}
+				} catch (e) {}
 			} else {
 				o['on' + e] = null;
 			}
@@ -4723,7 +4754,7 @@
 			获取函数名称，如 function chplayer(){} var fun=chplayer，则getParameterNames(fun)=chplayer
 		*/
 		getParameterNames: function(fn) {
-			if(typeof(fn) !== 'function') {
+			if (typeof(fn) !== 'function') {
 				return false;
 			}
 			var COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
@@ -4747,11 +4778,11 @@
 				tHours = '',
 				tMinutes = '',
 				tSeconds = '',
-			tSeconds = (seconds < 10) ? '0' + seconds : seconds + '',
-			tMinutes = (minutes < 10) ? '0' + minutes : minutes + '',
-			tHours = (hours < 10) ? '0' + hours : hours + '',
-			tDate = (date < 10) ? '0' + date : date + '',
-			tMonth = (month < 10) ? '0' + month : month + '';
+				tSeconds = (seconds < 10) ? '0' + seconds : seconds + '',
+				tMinutes = (minutes < 10) ? '0' + minutes : minutes + '',
+				tHours = (hours < 10) ? '0' + hours : hours + '',
+				tDate = (date < 10) ? '0' + date : date + '',
+				tMonth = (month < 10) ? '0' + month : month + '';
 			return tMonth + '/' + tDate + ' ' + tHours + ':' + tMinutes + ':' + tSeconds;
 		},
 		/*
@@ -4764,13 +4795,13 @@
 			var tSeconds = '',
 				tMinutes = '',
 				tHours = '';
-			if(isNaN(seconds)) {
+			if (isNaN(seconds)) {
 				seconds = 0;
 			}
 			var s = Math.floor(seconds % 60),
 				m = 0,
 				h = 0;
-			if(ishours) {
+			if (ishours) {
 				m = Math.floor(seconds / 60) % 60;
 				h = Math.floor(seconds / 3600);
 			} else {
@@ -4779,7 +4810,7 @@
 			tSeconds = (s < 10) ? '0' + s : s + '';
 			tMinutes = (m > 0) ? ((m < 10) ? '0' + m + ':' : m + ':') : '00:';
 			tHours = (h > 0) ? ((h < 10) ? '0' + h + ':' : h + ':') : '';
-			if(ishours) {
+			if (ishours) {
 				return tHours + tMinutes + tSeconds;
 			} else {
 				return tMinutes + tSeconds;
@@ -4795,7 +4826,7 @@
 			var chars = 'abcdefghijklmnopqrstuvwxyz';
 			var maxPos = chars.length;　　
 			var val = '';
-			for(i = 0; i < len; i++) {
+			for (i = 0; i < len; i++) {
 				val += chars.charAt(Math.floor(Math.random() * maxPos));
 			}
 			return 'ch' + val;
@@ -4806,8 +4837,8 @@
 		*/
 		getStringLen: function(str) {
 			var len = 0;
-			for(var i = 0; i < str.length; i++) {
-				if(str.charCodeAt(i) > 127 || str.charCodeAt(i) == 94) {
+			for (var i = 0; i < str.length; i++) {
+				if (str.charCodeAt(i) > 127 || str.charCodeAt(i) == 94) {
 					len += 2;
 				} else {
 					len++;
@@ -4820,17 +4851,17 @@
 			用来为ajax提供支持
 		*/
 		createXHR: function() {
-			if(window.XMLHttpRequest) {
+			if (window.XMLHttpRequest) {
 				//IE7+、Firefox、Opera、Chrome 和Safari
 				return new XMLHttpRequest();
-			} else if(window.ActiveXObject) {
+			} else if (window.ActiveXObject) {
 				//IE6 及以下
 				try {
 					return new ActiveXObject('Microsoft.XMLHTTP');
-				} catch(event) {
+				} catch (event) {
 					try {
 						return new ActiveXObject('Msxml2.XMLHTTP');
-					} catch(event) {
+					} catch (event) {
 						this.eject(this.errorList[7]);
 					}
 				}
@@ -4854,20 +4885,20 @@
 				data: null,
 				success: null
 			};
-			if(typeof(cObj) != 'object') {
+			if (typeof(cObj) != 'object') {
 				this.eject(this.errorList[9]);
 				return;
 			}
 			obj = this.standardization(obj, cObj);
-			if(obj.dataType === 'json' || obj.dataType === 'text' || obj.dataType === 'html') {
+			if (obj.dataType === 'json' || obj.dataType === 'text' || obj.dataType === 'html') {
 				var xhr = this.createXHR();
 				callback = function() {
 					//判断http的交互是否成功
-					if(xhr.status == 200) {
-						if(obj.success == null) {
+					if (xhr.status == 200) {
+						if (obj.success == null) {
 							return;
 						}
-						if(obj.dataType === 'json') {
+						if (obj.dataType === 'json') {
 							obj.success(eval('(' + xhr.responseText + ')')); //回调传递参数
 						} else {
 							obj.success(xhr.responseText); //回调传递参数
@@ -4878,29 +4909,29 @@
 				};
 				obj.url = obj.url + '?rand=' + this.randomString(6);
 				obj.data = this.formatParams(obj.data); //通过params()将名值对转换成字符串
-				if(obj.method === 'get' && !this.isUndefined(obj.data)) {
+				if (obj.method === 'get' && !this.isUndefined(obj.data)) {
 					obj.url += obj.url.indexOf('?') == -1 ? '?' + obj.data : '&' + obj.data;
 				}
-				if(obj.async === true) { //true表示异步，false表示同步
+				if (obj.async === true) { //true表示异步，false表示同步
 					xhr.onreadystatechange = function() {
-						if(xhr.readyState == 4) { //判断对象的状态是否交互完成
+						if (xhr.readyState == 4) { //判断对象的状态是否交互完成
 							callback(); //回调
 						}
 					};
 				}
 				xhr.open(obj.method, obj.url, obj.async);
-				if(obj.method === 'post') {
+				if (obj.method === 'post') {
 					xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 					xhr.setRequestHeader('charset', obj['charset']);
 					xhr.send(obj.data);
 				} else {
 					xhr.send(null); //get方式则填null
 				}
-				if(obj.async === false) { //同步
+				if (obj.async === false) { //同步
 					callback();
 				}
 
-			} else if(obj.dataType === 'jsonp') {
+			} else if (obj.dataType === 'jsonp') {
 				var oHead = document.getElementsByTagName('head')[0];
 				var oScript = document.createElement('script');
 				var callbackName = 'callback' + new Date().getTime();
@@ -4936,22 +4967,22 @@
 			检测浏览器是否支持HTML5-Video
 		*/
 		supportVideo: function() {
-			if(!!document.createElement('video').canPlayType) {
+			if (!!document.createElement('video').canPlayType) {
 				var vidTest = document.createElement("video");
 				oggTest = vidTest.canPlayType('video/ogg; codecs="theora, vorbis"');
-				if(!oggTest) {
+				if (!oggTest) {
 					h264Test = vidTest.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
-					if(!h264Test) {
+					if (!h264Test) {
 						return false;
 					} else {
-						if(h264Test == "probably") {
+						if (h264Test == "probably") {
 							return true;
 						} else {
 							return false;
 						}
 					}
 				} else {
-					if(oggTest == "probably") {
+					if (oggTest == "probably") {
 						return true;
 					} else {
 						return false;
@@ -4987,7 +5018,7 @@
 		*/
 		formatParams: function(data) {
 			var arr = [];
-			for(var i in data) {
+			for (var i in data) {
 				arr.push(encodeURIComponent(i) + '=' + encodeURIComponent(data[i]));
 			}
 			return arr.join('&');
@@ -4998,9 +5029,9 @@
 		*/
 		arrSort: function(arr) {
 			var temp = [];
-			for(var i = 0; i < arr.length; i++) {
-				for(var j = 0; j < arr.length - i; j++) {
-					if(!this.isUndefined(arr[j + 1]) && arr[j][3] < arr[j + 1][3]) {
+			for (var i = 0; i < arr.length; i++) {
+				for (var j = 0; j < arr.length - i; j++) {
+					if (!this.isUndefined(arr[j + 1]) && arr[j][3] < arr[j + 1][3]) {
 						temp = arr[j + 1];
 						arr[j + 1] = arr[j];
 						arr[j] = temp;
@@ -5014,8 +5045,8 @@
 			判断文件后缀
 		*/
 		getFileExt: function(filepath) {
-			if(filepath != '') {
-				if(filepath.indexOf('?') > -1) {
+			if (filepath != '') {
+				if (filepath.indexOf('?') > -1) {
 					filepath = filepath.split('?')[0];
 				}
 				var pos = '.' + filepath.replace(/.+\./, '');
@@ -5035,7 +5066,7 @@
 			给地址添加随机数
 		*/
 		getNewUrl: function(url) {
-			if(this.isContains(url, '?')) {
+			if (this.isContains(url, '?')) {
 				return url += '&' + this.randomString(8) + '=' + this.randomString(8);
 			} else {
 				return url += '?' + this.randomString(8) + '=' + this.randomString(8);
@@ -5047,9 +5078,10 @@
 		*/
 		client: function(event) {
 			var eve = event || window.event;
-			if(this.isUndefined(eve)){
-				eve={
-					clientX:0,clientY:0
+			if (this.isUndefined(eve)) {
+				eve = {
+					clientX: 0,
+					clientY: 0
 				};
 			}
 			return {
@@ -5072,7 +5104,7 @@
 			var parObj = obj;
 			var left = obj.offsetLeft;
 			var top = obj.offsetTop;
-			while(parObj = parObj.offsetParent) {
+			while (parObj = parObj.offsetParent) {
 				left += parObj.offsetLeft;
 				top += parObj.offsetTop;
 			}
@@ -5086,13 +5118,13 @@
 			删除本对象的所有属性
 		*/
 		removeChild: function() {
-			if(this.playerType == 'html5video') {
+			if (this.playerType == 'html5video') {
 				//删除计时器
 				var i = 0;
 				var timerArr = [this.timerError, this.timerFull, this.timerTime, this.timerBuffer, this.timerClick, this.timerLoading, this.timerCBar, this.timerVCanvas];
-				for(i = 0; i < timerArr.length; i++) {
-					if(timerArr[i] != null) {
-						if(timerArr[i].runing) {
+				for (i = 0; i < timerArr.length; i++) {
+					if (timerArr[i] != null) {
+						if (timerArr[i].runing) {
 							timerArr[i].stop();
 						}
 						timerArr[i] = null;
@@ -5100,7 +5132,7 @@
 				}
 				//删除事件监听
 				var ltArr = this.listenerArr;
-				for(i = 0; i < ltArr.length; i++) {
+				for (i = 0; i < ltArr.length; i++) {
 					this.removeListener(ltArr[i][0], ltArr[i][1], ltArr[i][2], ltArr[i][3]);
 				}
 			}
@@ -5116,9 +5148,9 @@
 		*/
 		canvasFill: function(name, path) {
 			name.beginPath();
-			for(var i = 0; i < path.length; i++) {
+			for (var i = 0; i < path.length; i++) {
 				var d = path[i];
-				if(i > 0) {
+				if (i > 0) {
 					name.lineTo(d[0], d[1]);
 				} else {
 					name.moveTo(d[0], d[1]);
@@ -5132,7 +5164,7 @@
 			画矩形
 		*/
 		canvasFillRect: function(name, path) {
-			for(var i = 0; i < path.length; i++) {
+			for (var i = 0; i < path.length; i++) {
 				var d = path[i];
 				name.fillRect(d[0], d[1], d[2], d[3]);
 			}
@@ -5143,22 +5175,22 @@
 		*/
 		deleteChild: function(f) {
 			var def = this.arrIndexOf(this.elementArr, f.className);
-			if(def > -1) {
+			if (def > -1) {
 				this.elementArr.splice(def, 1);
 			}
 			var childs = f.childNodes;
-			for(var i = childs.length - 1; i >= 0; i--) {
+			for (var i = childs.length - 1; i >= 0; i--) {
 				f.removeChild(childs[i]);
 			}
 
-			if(f && f != null && f.parentNode) {
+			if (f && f != null && f.parentNode) {
 				try {
-					if(f.parentNode) {
+					if (f.parentNode) {
 						f.parentNode.removeChild(f);
 
 					}
 
-				} catch(event) {}
+				} catch (event) {}
 			}
 		},
 		/*
@@ -5170,7 +5202,7 @@
 				h = 0,
 				x = 0,
 				y = 0;
-			if(stageW / stageH < vw / vh) {
+			if (stageW / stageH < vw / vh) {
 				w = stageW;
 				h = w * vh / vw;
 			} else {
@@ -5199,26 +5231,26 @@
 			var delHtmlTag = function(str) {
 				return str.replace(/<[^>]+>/g, ''); //去掉所有的html标记
 			};
-			for(i = 0; i < arrs.length; i++) {
-				if(arrs[i].replace(/\s/g, '').length > 0) {
+			for (i = 0; i < arrs.length; i++) {
+				if (arrs[i].replace(/\s/g, '').length > 0) {
 					arr.push(arrs[i]);
 				} else {
-					if(arr.length > 0) {
+					if (arr.length > 0) {
 						textSubtitles.push(arr);
 					}
 					arr = [];
 				}
 			}
-			for(i = 0; i < textSubtitles.length; ++i) {
+			for (i = 0; i < textSubtitles.length; ++i) {
 				var textSubtitle = textSubtitles[i];
-				if(textSubtitle.length >= 2) {
+				if (textSubtitle.length >= 2) {
 					var sn = textSubtitle[0]; // 字幕的序号
 					var startTime = this.toSeconds(this.trim(textSubtitle[1].split(' --> ')[0])); // 字幕的开始时间
 					var endTime = this.toSeconds(this.trim(textSubtitle[1].split(' --> ')[1])); // 字幕的结束时间
 					var content = [delHtmlTag(textSubtitle[2])]; // 字幕的内容
 					// 字幕可能有多行
-					if(textSubtitle.length > 2) {
-						for(var j = 3; j < textSubtitle.length; j++) {
+					if (textSubtitle.length > 2) {
+						for (var j = 3; j < textSubtitle.length; j++) {
 							content.push(delHtmlTag(textSubtitle[j]));
 						}
 					}
@@ -5252,30 +5284,30 @@
 			this.startFun = function() {
 				thisTemp.number++;
 				thisTemp.fun();
-				if(thisTemp.numberTotal != null && thisTemp.number >= thisTemp.numberTotal) {
+				if (thisTemp.numberTotal != null && thisTemp.number >= thisTemp.numberTotal) {
 					thisTemp.stop();
 				}
 			};
 			this.start = function() {
-				if(!thisTemp.runing) {
+				if (!thisTemp.runing) {
 					thisTemp.runing = true;
 					thisTemp.timeObj = window.setInterval(thisTemp.startFun, time);
 				}
 			};
 			this.stop = function() {
-				if(thisTemp.runing) {
+				if (thisTemp.runing) {
 					thisTemp.runing = false;
 					window.clearInterval(thisTemp.timeObj);
 					thisTemp.timeObj = null;
 				}
 			};
-			if(time) {
+			if (time) {
 				this.time = time;
 			}
-			if(fun) {
+			if (fun) {
 				this.fun = fun;
 			}
-			if(number) {
+			if (number) {
 				this.numberTotal = number;
 			}
 			this.start();
@@ -5286,9 +5318,9 @@
 		*/
 		toSeconds: function(t) {
 			var s = 0.0;
-			if(t) {
+			if (t) {
 				var p = t.split(':');
-				for(i = 0; i < p.length; i++) {
+				for (i = 0; i < p.length; i++) {
 					s = s * 60 + parseFloat(p[i].replace(',', '.'));
 				}
 			}
@@ -5301,17 +5333,17 @@
 		standardization: function(o, n) { //n替换进o
 			var h = {};
 			var k;
-			for(k in o) {
+			for (k in o) {
 				h[k] = o[k];
 			}
-			for(k in n) {
+			for (k in n) {
 				var type = typeof(h[k]);
-				switch(type) {
+				switch (type) {
 					case 'number':
 						h[k] = parseFloat(n[k]);
 						break;
 					case 'string':
-						if(typeof(n[k]) != 'string' && typeof(n[k]) != 'undefined') {
+						if (typeof(n[k]) != 'string' && typeof(n[k]) != 'undefined') {
 							h[k] = n[k].toString();
 						} else {
 							h[k] = n[k];
@@ -5331,14 +5363,14 @@
 		 */
 		arrIndexOf: function(arr, key) {
 			var re = new RegExp(key, ['']);
-			return(arr.toString().replace(re, '┢').replace(/[^,┢]/g, '')).indexOf('┢');
+			return (arr.toString().replace(re, '┢').replace(/[^,┢]/g, '')).indexOf('┢');
 		},
 		/*
 			共用函数
 			去掉空格
 		 */
 		trim: function(str) {
-			 return str.replace(/(^\s*)|(\s*$)/g, '');
+			return str.replace(/(^\s*)|(\s*$)/g, '');
 		},
 		/*
 			共用函数
@@ -5347,24 +5379,24 @@
 		log: function(val) {
 			try {
 				console.log(val);
-			} catch(e) {}
+			} catch (e) {}
 		},
 		/*
 			共用函数
 			弹出提示
 		*/
 		eject: function(er, val) {
-			if(!this.vars['debug']){
+			if (!this.vars['debug']) {
 				return;
 			}
 			var errorVal = er[1];
-			if(!this.isUndefined(val)) {
+			if (!this.isUndefined(val)) {
 				errorVal = errorVal.replace('[error]', val);
 			}
 			var value = 'error ' + er[0] + ':' + errorVal;
 			try {
 				alert(value);
-			} catch(e) {}
+			} catch (e) {}
 		}
 	};
 	window.chplayer = chplayer;
