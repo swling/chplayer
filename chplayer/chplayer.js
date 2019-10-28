@@ -68,7 +68,7 @@
 			front: '', //前一集按钮动作
 			next: '', //下一集按钮动作
 			loaded: '', //加载播放器后调用的函数
-			flashplayer: false, //设置成true则强制使用flashplayer
+			// flashplayer: false, //设置成true则强制使用flashplayer
 			html5m3u8: false, //PC平台上是否使用h5播放器播放m3u8
 			track: null, //字幕轨道
 			chtrack: null, //ch字幕
@@ -228,9 +228,9 @@
 				this.eject(this.errorList[1]);
 			}
 			this.vars = this.standardization(this.varsConfig, c);
-			if((!this.supportVideo() && this.vars['flashplayer'] != '') || this.vars['flashplayer']) {
-				this.html5Video = false;
-			}
+			// if((!this.supportVideo() && this.vars['flashplayer'] != '') || this.vars['flashplayer']) {
+			// 	this.html5Video = false;
+			// }
 			if(this.vars['video']) {
 				//判断视频数据类型
 				this.analysedVideoUrl(this.vars['video']);
@@ -391,10 +391,10 @@
 				return true;
 
 			};
-			if(this.vars['flashplayer']) {
-				this.html5Video = false;
-				return;
-			}
+			// if(this.vars['flashplayer']) {
+			// 	this.html5Video = false;
+			// 	return;
+			// }
 			if(navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i)) {
 				mobile = true;
 			}
@@ -568,7 +568,7 @@
 				this.definition();
 				this.playerLoad();
 			} else { //如果不支持HTML5-VIDEO则调用flashplayer
-				this.embedSWF();
+				// this.embedSWF();
 			}
 		},
 		/*
@@ -3406,10 +3406,10 @@
 				if(this.V == null) {
 					return;
 				}
-				if(this.playerType=='flashplayer'){
-					this.V.playOrPause();
-					return;
-				}
+				// if(this.playerType=='flashplayer'){
+				// 	this.V.playOrPause();
+				// 	return;
+				// }
 				if(this.V.paused) {
 					this.play();
 				} else {
@@ -3660,9 +3660,9 @@
 			向播放器界面添加一个文本
 		*/
 		addElement: function(attribute) {
-			if(this.playerType == 'flashplayer') {
-				return this.V.addElement(attribute);
-			}
+			// if(this.playerType == 'flashplayer') {
+			// 	return this.V.addElement(attribute);
+			// }
 			var i = 0;
 			var obj = {
 				list: null,
@@ -3856,9 +3856,9 @@
 			获取元件的属性，包括x,y,width,height,alpha
 		*/
 		getElement: function(element) {
-			if(this.playerType == 'flashplayer') {
-				return this.V.getElement(element);
-			}
+			// if(this.playerType == 'flashplayer') {
+			// 	return this.V.getElement(element);
+			// }
 			var ele = element;
 			if(typeof(element) == 'string') {
 				ele = this.getByElement(element);
@@ -3877,9 +3877,9 @@
 			根据节点的x,y计算在播放器里的坐标
 		*/
 		calculationCoor: function(ele) {
-			if(this.playerType == 'flashplayer') {
-				return this.V.calculationCoor(ele);
-			}
+			// if(this.playerType == 'flashplayer') {
+			// 	return this.V.calculationCoor(ele);
+			// }
 			if(ele==[]){
 				return;
 			}
@@ -4163,9 +4163,9 @@
 			speed:Number=运动的总秒数，支持小数
 		*/
 		animate: function(attribute) {
-			if(this.playerType == 'flashplayer') {
-				return this.V.animate(attribute);
-			}
+			// if(this.playerType == 'flashplayer') {
+			// 	return this.V.animate(attribute);
+			// }
 			var thisTemp = this;
 			var animateId = 'animate_' + this.randomString();
 			var obj = {
@@ -4418,10 +4418,10 @@
 			继续运行animate
 		*/
 		animateResume: function(id) {
-			if(this.playerType == 'flashplayer') {
-				this.V.animateResume(this.isUndefined(id) ? '' : id);
-				return;
-			}
+			// if(this.playerType == 'flashplayer') {
+			// 	this.V.animateResume(this.isUndefined(id) ? '' : id);
+			// 	return;
+			// }
 			var arr = [];
 			if(id != '' && !this.isUndefined(id) && id != 'pause') {
 				arr.push(id);
@@ -4445,10 +4445,10 @@
 			暂停运行animate
 		*/
 		animatePause: function(id) {
-			if(this.playerType == 'flashplayer') {
-				this.V.animatePause(this.isUndefined(id) ? '' : id);
-				return;
-			}
+			// if(this.playerType == 'flashplayer') {
+			// 	this.V.animatePause(this.isUndefined(id) ? '' : id);
+			// 	return;
+			// }
 			var arr = [];
 			if(id != '' && !this.isUndefined(id) && id != 'pause') {
 				arr.push(id);
@@ -4482,13 +4482,13 @@
 			删除外部新建的元件
 		*/
 		deleteElement: function(ele) {
-			if(this.playerType == 'flashplayer' && this.V) {
-				try{
-					this.V.deleteElement(ele);
-				}
-				catch(event){}
-				return;
-			}
+			// if(this.playerType == 'flashplayer' && this.V) {
+			// 	try{
+			// 		this.V.deleteElement(ele);
+			// 	}
+			// 	catch(event){}
+			// 	return;
+			// }
 			//先将该元件从元件数组里删除，让其不再跟随播放器的尺寸改变而改变位置
 			var def = this.arrIndexOf(this.elementArr, ele.className);
 			if(def > -1) {
@@ -4630,14 +4630,14 @@
 			d值为空时，则表示监听当前的视频播放器
 		*/
 		addListener: function(e, f, d, t) {
-			if(this.playerType=='flashplayer' && this.isUndefined(d)) {
-				var ff = ''; //定义用来向flashplayer传递的函数字符
-				if(typeof(f) == 'function') {
-					ff = this.getParameterNames(f);
-				}
-				this.V.addListener(e, ff);
-				return;
-			}
+			// if(this.playerType=='flashplayer' && this.isUndefined(d)) {
+			// 	var ff = ''; //定义用来向flashplayer传递的函数字符
+			// 	if(typeof(f) == 'function') {
+			// 		ff = this.getParameterNames(f);
+			// 	}
+			// 	this.V.addListener(e, ff);
+			// 	return;
+			// }
 			if(this.isUndefined(t)) {
 				t = false
 			}
@@ -4677,9 +4677,9 @@
 			d值为空时，则表示监听当前的视频播放器
 		*/
 		removeListener: function(e, f, d, t) {
-			if(this.playerType=='flashplayer' && this.getParameterNames(f) && this.isUndefined(d)) {
-				return;
-			}
+			// if(this.playerType=='flashplayer' && this.getParameterNames(f) && this.isUndefined(d)) {
+			// 	return;
+			// }
 			if(this.isUndefined(t)) {
 				t = false
 			}
@@ -4965,22 +4965,22 @@
 			共用函数
 			返回flashplayer的对象
 		*/
-		getObjectById: function(id) {
-			var x = null;
-			var y = this.getByElement('#'+id);
-			var r = 'embed';
-			if(y && y.nodeName == 'OBJECT') {
-				if(typeof(y.SetVariable) != 'undefined') {
-					x = y;
-				} else {
-					var z = y.getElementsByTagName(r)[0];
-					if(z) {
-						x = z;
-					}
-				}
-			}
-			return x;
-		},
+		// getObjectById: function(id) {
+		// 	var x = null;
+		// 	var y = this.getByElement('#'+id);
+		// 	var r = 'embed';
+		// 	if(y && y.nodeName == 'OBJECT') {
+		// 		if(typeof(y.SetVariable) != 'undefined') {
+		// 			x = y;
+		// 		} else {
+		// 			var z = y.getElementsByTagName(r)[0];
+		// 			if(z) {
+		// 				x = z;
+		// 			}
+		// 		}
+		// 	}
+		// 	return x;
+		// },
 		/*
 			共用函数
 			对象转地址字符串
